@@ -2,7 +2,7 @@ var config = require('../config/config.json');
 var request = require('sync-request');
 var async = require('async');
 var _ = require('underscore');
-var urlMetadata = require('url-metadata')
+var urlMetadata = require('url-metadata');
 
 exports.getMainNewsList = function(req, res){
 
@@ -26,6 +26,7 @@ exports.getMainNewsList = function(req, res){
     }
 
     //task 셋팅
+
     var imageSetTask = [
         function(next){task(0,next)},
         function(next){task(1,next)},
@@ -35,23 +36,22 @@ exports.getMainNewsList = function(req, res){
     ];
 
     //async 모듈을 통해 동기식으로 데이터를 가져와서 기사 이미지 셋팅(여기서 소요시간이 조금 발생함 -> 차후 개선)
-    async.parallel(imageSetTask, function (err, results) {
-        var imgArr = results;
-        for(var i=0; i<5; i++){
-            temp[i].imgurl = imgArr[i].replace("https","http");
-        }
+    //async.parallel(imageSetTask, function (err, results) {
+    //   var imgArr = results;
+    //    for(var i=0; i<5; i++){
+    //        temp[i].imgurl = imgArr[i].replace("https","http");
+    //    }
         response.items = temp;
         res.send(response);
-    });
+    //});
 };
 
 var getNewsDataFromAPI = function(keyword,itemCount,start){
     var url = 'https://openapi.naver.com/v1/search/news.json?query='+keyword+'&display='+itemCount+'&start='+start+'&sort=sim';
-    var response = JSON.parse(request('GET', encodeURI(url) ,
+    return JSON.parse(request('GET', encodeURI(url) ,
         {'headers': {
             'X-Naver-Client-Id': config.naverClientId,
             'X-Naver-Client-Secret': config.naverClientSecret
         }
     }).getBody('utf8'));
-    return response;
 };

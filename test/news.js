@@ -2,21 +2,30 @@
 
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var should = chai.should();
 var server = require('../app');
 
 chai.use(chaiHttp);
 
-// routes/news.js/newsList
-describe('API Endpoint Test', function(){
-    describe('GET request on /newsList', function(){
-        it('should return status code 200', function(done){
+describe('VolleyServer API Test', function(){
+    describe('배구뉴스 리스트 가져오기 - (/news/getList, GET)', function(){
+        var response;
+        this.timeout(20000);
+
+        before(function (done) {
             chai.request(server)
-            .get('/newsList')
-            .end(function(err, res){
-                res.should.have.status(200);
-                done();
-            });
-        }).timeout(15000);
+                .get('/news/getList')
+                .end(function (err, res) {
+                    response = res;
+                    done();
+                });
+        });
+
+        it("상태코드 200", function () {
+            response.should.have.status(200);
+        });
+
+        it("10개 가져오기", function () {
+            response.body.display.should.equal(10);
+        });
     });
 });
