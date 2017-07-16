@@ -5,5 +5,5 @@ var news = require('./news');
 //var user = require('./user');
 
 exports.init = function(app) {
-    app.get('/newsList/', news.getMainNewsList);
-}
+    app.get('/news/getList', news.getMainNewsList);
+};

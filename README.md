@@ -1,4 +1,4 @@
-# VolleyTalk_Server
+# VolleyTalk_Server [![Build Status](https://travis-ci.org/Nexters/VolleyTalk_Server.svg?branch=master)](https://travis-ci.org/Nexters/VolleyTalk_Server)
 
 ## Create Database  
 `./DatabaseSetting/setDatabase.sh`
@@ -7,6 +7,8 @@
 Change tmp_config.json file to config.json in config folder.
 and set value for your server enviroment.
 
+## Test
+`mocha`
 
 ## Server start  
 `node app.js`
