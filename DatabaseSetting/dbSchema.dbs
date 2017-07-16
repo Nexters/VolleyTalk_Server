@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="VolleyTalk" id="Project_435087f" template="Default" database="MySql" >
+	<schema name="volleytalk" schemaname="volleytalk" >
+		<table name="tb_cheering" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="playerseq" type="int" jt="4" mandatory="y" />
+			<column name="comment" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="regdate" type="datetime" jt="93" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<index name="pk_tb_cheering" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_cheering" unique="NORMAL" >
+				<column name="playerseq" />
+			</index>
+			<fk name="fk_tb_cheering_tb_player" to_schema="volleytalk" to_table="tb_player" >
+				<fk_column name="playerseq" pk="seq" />
+			</fk>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_like" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="liketype" type="varchar" length="10" jt="12" mandatory="y" >
+				<comment><![CDATA[user / team / player / post / comment]]></comment>
+			</column>
+			<column name="typeseq" type="int" jt="4" mandatory="y" >
+				<comment><![CDATA[user seq / team seq / player seq / post seq / comment seq /]]></comment>
+			</column>
+			<column name="userid" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="regdate" type="datetime" jt="93" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<index name="pk_tb_like" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_like" unique="NORMAL" >
+				<column name="userid" />
+			</index>
+			<fk name="fk_tb_like_tb_userinfo" to_schema="volleytalk" to_table="tb_userinfo" >
+				<fk_column name="userid" pk="userid" />
+			</fk>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_player" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="teamseq" type="int" length="5" jt="4" mandatory="y" />
+			<column name="name" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="birth" type="varchar" length="15" jt="12" />
+			<column name="physical" type="varchar" length="10" jt="12" />
+			<column name="position" type="varchar" length="10" jt="12" />
+			<column name="gender" type="varchar" length="1" jt="12" mandatory="y" />
+			<column name="likecount" type="int" jt="4" />
+			<column name="postcount" type="int" jt="4" />
+			<column name="profileimg_url" type="varchar" length="100" jt="12" />
+			<index name="pk_tb_player" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_player" unique="NORMAL" >
+				<column name="teamseq" />
+			</index>
+			<fk name="fk_tb_player_tb_team" to_schema="volleytalk" to_table="tb_team" >
+				<fk_column name="teamseq" pk="seq" />
+			</fk>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_player_comments" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="postseq" type="int" jt="4" mandatory="y" >
+				<comment><![CDATA[player post seq]]></comment>
+			</column>
+			<column name="comment" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="regdate" type="datetime" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<index name="pk_tb_comments_0" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_comments_0" unique="NORMAL" >
+				<column name="postseq" />
+			</index>
+			<fk name="fk_tb_player_comments" to_schema="volleytalk" to_table="tb_player_posts" >
+				<fk_column name="postseq" pk="seq" />
+			</fk>
+		</table>
+		<table name="tb_player_posts" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="playerseq" type="int" length="5" jt="4" mandatory="y" />
+			<column name="title" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="contents" type="varchar" length="1000" jt="12" mandatory="y" />
+			<column name="img_url" type="varchar" length="100" jt="12" />
+			<column name="img_url_thumb" type="varchar" length="100" jt="12" />
+			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="likecount" type="int" jt="4" />
+			<column name="commentcount" type="int" jt="4" />
+			<column name="regdate" type="datetime" jt="93" >
+				<defo>CURRENT_DATE</defo>
+			</column>
+			<index name="pk_tb_posts_0" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_posts_0" unique="NORMAL" >
+				<column name="playerseq" />
+			</index>
+			<fk name="fk_tb_player_posts" to_schema="volleytalk" to_table="tb_player" >
+				<fk_column name="playerseq" pk="seq" />
+			</fk>
+		</table>
+		<table name="tb_team" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="name" type="varchar" length="30" jt="12" mandatory="y" />
+			<column name="gender" type="varchar" length="1" jt="12" mandatory="y" />
+			<column name="extablish" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="homeground" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="likecount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="postcount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<index name="pk_tb_team" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_team_comments" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="postseq" type="int" jt="4" mandatory="y" >
+				<comment><![CDATA[post seq]]></comment>
+			</column>
+			<column name="comment" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="regdate" type="datetime" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<index name="pk_tb_comments" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_comments" unique="NORMAL" >
+				<column name="postseq" />
+			</index>
+			<fk name="fk_tb_team_comments" to_schema="volleytalk" to_table="tb_team_posts" >
+				<fk_column name="postseq" pk="seq" />
+			</fk>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_team_posts" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="teamseq" type="int" length="5" jt="4" mandatory="y" />
+			<column name="title" type="varchar" length="100" jt="12" mandatory="y" />
+			<column name="contents" type="varchar" length="1000" jt="12" mandatory="y" />
+			<column name="img_url" type="varchar" length="100" jt="12" />
+			<column name="img_url_thumb" type="varchar" length="100" jt="12" />
+			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="likecount" type="int" jt="4" />
+			<column name="commentcount" type="int" jt="4" />
+			<column name="regdate" type="datetime" jt="93" >
+				<defo>CURRENT_DATE</defo>
+			</column>
+			<index name="pk_tb_team_posts" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<fk name="fk_tb_team_posts_tb_team" to_schema="volleytalk" to_table="tb_team" >
+				<fk_column name="teamseq" pk="seq" />
+			</fk>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_userinfo" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="userid" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="nickname" type="varchar" length="100" jt="12" />
+			<column name="email" type="varchar" length="100" jt="12" />
+			<column name="profileimg_thumb" type="varchar" length="100" jt="12" />
+			<column name="bgimg" type="varchar" length="100" jt="12" />
+			<column name="regdate" type="datetime" jt="93" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="likecount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="commentcount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<index name="pk_tb_user" unique="PRIMARY_KEY" >
+				<column name="seq" />
+				<column name="userid" />
+			</index>
+			<index name="pk_tb_userinfo" unique="UNIQUE" >
+				<column name="userid" />
+			</index>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+	</schema>
+	<connector name="ssd" database="MySql" driver_class="com.mysql.jdbc.Driver" driver_jar="mysql-connector-java-5.1.40-bin.jar" driver_desc="Standard" host="localhost" port="3306" user="root" />
+	<layout name="Default Layout" id="Layout_2758cd4" show_relation="columns" >
+		<entity schema="volleytalk" name="tb_team" color="c1d8ee" x="240" y="64" />
+		<entity schema="volleytalk" name="tb_player" color="c1d8ee" x="224" y="304" />
+		<entity schema="volleytalk" name="tb_cheering" color="c1d8ee" x="416" y="544" />
+		<entity schema="volleytalk" name="tb_like" color="c1d8ee" x="80" y="336" />
+		<entity schema="volleytalk" name="tb_userinfo" color="c1d8ee" x="48" y="64" />
+		<entity schema="volleytalk" name="tb_team_posts" color="c1d8ee" x="448" y="48" />
+		<entity schema="volleytalk" name="tb_team_comments" color="c1d8ee" x="608" y="80" />
+		<entity schema="volleytalk" name="tb_player_comments" color="c1d8ee" x="624" y="304" />
+		<entity schema="volleytalk" name="tb_player_posts" color="c1d8ee" x="416" y="304" />
+		<script name="tb_cheering" id="Query_fd10f2" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_cheering ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	playerseq            int  NOT NULL  ,
+	comment              varchar(100)  NOT NULL  ,
+	author               varchar(50)  NOT NULL  ,
+	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
+	CONSTRAINT pk_tb_cheering PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_cheering ON volleytalk.tb_cheering ( playerseq );
+
+ALTER TABLE volleytalk.tb_cheering ADD CONSTRAINT fk_tb_cheering_tb_player FOREIGN KEY ( playerseq ) REFERENCES volleytalk.tb_player( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_like" id="Query_5755891" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_like ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	liketype             varchar(10)  NOT NULL  ,
+	typeseq              int  NOT NULL  ,
+	userid               varchar(50)  NOT NULL  ,
+	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
+	CONSTRAINT pk_tb_like PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_like ON volleytalk.tb_like ( userid );
+
+ALTER TABLE volleytalk.tb_like ADD CONSTRAINT fk_tb_like_tb_userinfo FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfo( userid ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_like_001" id="Query_57cfd15" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_like ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	liketype             varchar(10)  NOT NULL  ,
+	typeseq              int  NOT NULL  ,
+	userid               varchar(50)  NOT NULL  ,
+	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
+	CONSTRAINT pk_tb_like PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_like ON volleytalk.tb_like ( userid );
+
+ALTER TABLE volleytalk.tb_like MODIFY liketype varchar(10)  NOT NULL   COMMENT 'user / team / player / post / comment';
+
+ALTER TABLE volleytalk.tb_like MODIFY typeseq int  NOT NULL   COMMENT 'user seq / team seq / player seq / post seq / comment seq /';
+
+ALTER TABLE volleytalk.tb_like ADD CONSTRAINT fk_tb_like_tb_userinfo FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfo( userid ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_like_002" id="Query_4f60c3b" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_like ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	liketype             varchar(10)  NOT NULL  ,
+	typeseq              int  NOT NULL  ,
+	userid               varchar(50)  NOT NULL  ,
+	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
+	CONSTRAINT pk_tb_like PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_like ON volleytalk.tb_like ( userid );
+ALTER TABLE volleytalk.tb_like ADD CONSTRAINT fk_tb_like_tb_userinfo FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfo( userid ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_player" id="Query_5c2748a" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_player ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	teamseq              int  NOT NULL  ,
+	name                 varchar(10)  NOT NULL  ,
+	birth                varchar(15)    ,
+	physical             varchar(10)    ,
+	position             varchar(10)    ,
+	gender               varchar(1)  NOT NULL  ,
+	likecount            int    ,
+	postcount            int    ,
+	profileimg_url       varchar(100)    ,
+	CONSTRAINT pk_tb_player PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_player ON volleytalk.tb_player ( teamseq );
+
+ALTER TABLE volleytalk.tb_player ADD CONSTRAINT fk_tb_player_tb_team FOREIGN KEY ( teamseq ) REFERENCES volleytalk.tb_team( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_player_comments" id="Query_3aef41b" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_player_comments ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	postseq              int  NOT NULL  ,
+	comment              varchar(100)  NOT NULL  ,
+	author               varchar(50)  NOT NULL  ,
+	regdate              datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+	CONSTRAINT pk_tb_comments_0 PRIMARY KEY ( seq )
+ );
+
+CREATE INDEX idx_tb_comments_0 ON volleytalk.tb_player_comments ( postseq );
+
+ALTER TABLE volleytalk.tb_player_comments MODIFY postseq int  NOT NULL   COMMENT 'player post seq';
+
+ALTER TABLE volleytalk.tb_player_comments ADD CONSTRAINT fk_tb_player_comments FOREIGN KEY ( postseq ) REFERENCES volleytalk.tb_player_posts( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_player_posts" id="Query_3ebe7b0" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_player_posts ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	playerseq            int  NOT NULL  ,
+	title                varchar(100)  NOT NULL  ,
+	contents             varchar(1000)  NOT NULL  ,
+	img_url              varchar(100)    ,
+	img_url_thumb        varchar(100)    ,
+	author               varchar(50)  NOT NULL  ,
+	likecount            int    ,
+	commentcount         int    ,
+	regdate              date   DEFAULT CURRENT_DATE ,
+	CONSTRAINT pk_tb_posts_0 PRIMARY KEY ( seq )
+ );
+
+CREATE INDEX idx_tb_posts_0 ON volleytalk.tb_player_posts ( playerseq );
+
+ALTER TABLE volleytalk.tb_player_posts ADD CONSTRAINT fk_tb_player_posts FOREIGN KEY ( playerseq ) REFERENCES volleytalk.tb_player( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_team" id="Query_3a6a6f5" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_team ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	name                 varchar(30)  NOT NULL  ,
+	gender               varchar(1)  NOT NULL  ,
+	extablish            varchar(10)  NOT NULL  ,
+	homeground           varchar(10)  NOT NULL  ,
+	likecount            int   DEFAULT 0 ,
+	postcount            int   DEFAULT 0 ,
+	CONSTRAINT pk_tb_team PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+]]></string>
+		</script>
+		<script name="tb_team_comments" id="Query_4a04637" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_team_comments ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	postseq              int  NOT NULL  ,
+	comment              varchar(100)  NOT NULL  ,
+	author               varchar(50)  NOT NULL  ,
+	regdate              datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+	CONSTRAINT pk_tb_comments PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_comments ON volleytalk.tb_team_comments ( postseq );
+
+ALTER TABLE volleytalk.tb_team_comments MODIFY postseq int  NOT NULL   COMMENT 'post seq';
+
+ALTER TABLE volleytalk.tb_team_comments ADD CONSTRAINT fk_tb_team_comments FOREIGN KEY ( postseq ) REFERENCES volleytalk.tb_team_posts( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_team_posts" id="Query_532d1c9" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_team_posts ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	teamseq              int  NOT NULL  ,
+	title                varchar(100)  NOT NULL  ,
+	contents             varchar(1000)  NOT NULL  ,
+	img_url              varchar(100)    ,
+	img_url_thumb        varchar(100)    ,
+	author               varchar(50)  NOT NULL  ,
+	likecount            int    ,
+	commentcount         int    ,
+	regdate              date   DEFAULT CURRENT_DATE ,
+	CONSTRAINT pk_tb_team_posts PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+ALTER TABLE volleytalk.tb_team_posts ADD CONSTRAINT fk_tb_team_posts_tb_team FOREIGN KEY ( teamseq ) REFERENCES volleytalk.tb_team( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_userinfo" id="Query_4017a6c" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_userinfo ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	userid               varchar(50)  NOT NULL  ,
+	nickname             varchar(100)    ,
+	email                varchar(100)    ,
+	profileimg_thumb     varchar(100)    ,
+	bgimg                varchar(100)    ,
+	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
+	likecount            int   DEFAULT 0 ,
+	commentcount         int   DEFAULT 0 ,
+	CONSTRAINT pk_tb_user PRIMARY KEY ( seq, userid ),
+	CONSTRAINT pk_tb_userinfo UNIQUE ( userid ) 
+ );
+
+]]></string>
+		</script>
+		<script name="tb_userinfo_001" id="Query_26b022f" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_userinfo ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	userid               int UNSIGNED NOT NULL  ,
+	nickname             varchar(100)    ,
+	email                varchar(100)    ,
+	profileimg_thumb     varchar(100)    ,
+	bgimg                varchar(100)    ,
+	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
+	likecount            int   DEFAULT 0 ,
+	commentcount         int   DEFAULT 0 ,
+	CONSTRAINT pk_tb_user PRIMARY KEY ( seq, userid )
+ ) engine=InnoDB;
+
+]]></string>
+		</script>
+	</layout>
+</project>

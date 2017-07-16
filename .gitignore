@@ -1,3 +1,6 @@
+# Custom Configuration
+config/config.json
+
 # Logs
 logs
 *.log
@@ -57,3 +60,7 @@ typings/
 # dotenv environment variables file
 .env
 
+.idea/VolleyTalk_Server.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
