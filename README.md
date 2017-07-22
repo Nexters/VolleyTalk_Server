@@ -4,7 +4,7 @@
 `./DatabaseSetting/setDatabase.sh`
 
 ## Set config file
-Change tmp_config.json file to config.json in config folder.
+Change tmp_config.json file to config.json in config folder.  
 and set value for your server enviroment.
 
 ## Test

@@ -1,0 +1,28 @@
+{
+	"variables": [],
+	"info": {
+		"name": "VolleyServer API",
+		"_postman_id": "2763f81e-069c-105e-1395-7f95e9e1fe37",
+		"description": "VolleyServer API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "News",
+			"description": "News tab API list",
+			"item": [
+				{
+					"name": "배구 뉴스 리스트",
+					"request": {
+						"url": "{{hostname}}/news/getList",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "배구 탭에서 사용될 뉴스목록을 가져온다\n(빠른시간 순 정렬, 10개뉴스)"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
