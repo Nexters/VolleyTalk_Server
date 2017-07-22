@@ -14,12 +14,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//app.use(function(){console.log('this is log')});
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+
+app.set('config', require('./config/config.json'));
+
 //라우터 설정
-require('./routes/main').init(app);
+require('./routes/index').init(app);
+
+//인터셉터 설정
+//require('./interceptor/interceptor').init(app);
 
 //포트 설정
 app.set('port', 3000);
