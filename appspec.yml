@@ -6,5 +6,5 @@ files:
 
 hooks:
   AfterInstall:
-    - location: /home/ubuntu/volleyTalk-Server/restart.sh
+    - location: restart.sh
       runas: root
