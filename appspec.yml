@@ -3,3 +3,8 @@ os: linux
 files:
   - source: ./
     destination: /home/ubuntu/volleyTalk-Server
+
+hooks:
+  AfterInstall:
+    - location: /home/ubuntu/volleyTalk-Server/restart.sh
+      runas: root
