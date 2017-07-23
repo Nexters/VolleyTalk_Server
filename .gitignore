@@ -1,6 +1,9 @@
 # Custom Configuration
 config/config.json
 
+#News Json file
+/newsFile/news.json
+
 # Logs
 logs
 *.log

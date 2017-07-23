@@ -8,7 +8,7 @@ echo ""
 echo "Input your MySql password"
 read password
 
-mysql -u $account -p $password -e "
+mysql -u $account -p$password -e "
 
 create database volleytalk;
 
