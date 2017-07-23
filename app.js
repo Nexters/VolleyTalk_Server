@@ -4,7 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var fs = require('fs');
+var news = require('./routes/news');
 var app = express();
 
 // uncomment after placing your favicon in /public
@@ -35,6 +36,16 @@ app.set('port', 3000);
 app.listen(app.get('port'), function(){
     console.log('Volley Talk API server start : '+app.get('port'));
 });
+
+//서버 최초 실행시 news.json파일 있는지 확인해서 없으면 생성
+var newsFileSetUp = function(){
+    if(!fs.existsSync('./newsFile')){
+        fs.mkdirSync('./newsFile');
+        fs.openSync('./newsFile/news.json', 'w');
+        require('./routes/news').newsListToJsonFile();
+    }
+};
+newsFileSetUp();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

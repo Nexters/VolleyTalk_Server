@@ -7,18 +7,15 @@ var moment = require('moment');
 var cron = require('cron');
 var fs = require('fs');
 
-
 //1시간 단위로 뉴스를 json파일로 저장함
-new cron.CronJob('* 00 * * * *', function(){
-    newsListToJsonFile();
+new cron.CronJob('01 00 * * * *', function(){
+    this.newsListToJsonFile();
 }, null, true, 'Asia/Seoul');
 
 // 배구 뉴스 리스트 가져오기
 exports.getMainNewsList = function(req, res) {
-    var newsData = JSON.parse(fs.readFileSync('./newsFile/news.json', 'utf8'));
-    if(newsData == null || newsData == ''){
-        newsListToJsonFile();
-    }
+    var fileRead = fs.readFileSync('./newsFile/news.json', 'utf8');
+    var newsData = JSON.parse(fileRead);
     res.send(newsData);
 };
 
@@ -29,7 +26,7 @@ exports.getNewsListByTeam = function(req, res){
     res.send(response);
 };
 
-var newsListToJsonFile = function(){
+exports.newsListToJsonFile = function(){
     //배구 뉴스 가져오기
     var response = getNewsDataFromAPI("배구", 10, 1);
 
