@@ -10,7 +10,6 @@ chai.use(chaiHttp);
 describe('VolleyServer API Test', function(){
     describe('배구뉴스 리스트 가져오기 - (/news/getList, GET)', function(){
         var response;
-        this.timeout(20000);
 
         before(function (done) {
             chai.request(server)
@@ -26,6 +25,7 @@ describe('VolleyServer API Test', function(){
         });
 
         it("10개 가져오기", function () {
+
             response.body.display.should.equal(10);
         });
     });
@@ -35,7 +35,7 @@ describe('VolleyServer API Test', function(){
 
         before(function (done) {
             chai.request(server)
-                .get('/news/getList')
+                .get('/news/getList/:team')
                 .send({'team':'대한항공'})
                 .end(function (err, res) {
                     response = res;
