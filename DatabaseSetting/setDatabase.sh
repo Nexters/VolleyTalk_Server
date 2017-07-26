@@ -10,7 +10,7 @@ read password
 
 mysql -u $account -p$password -e "
 
-create database volleytalk;
+create database volleytalk DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;;
 
 CREATE TABLE volleytalk.tb_userinfos (
 	seq                  int  NOT NULL  AUTO_INCREMENT,

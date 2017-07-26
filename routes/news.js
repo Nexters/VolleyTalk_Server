@@ -12,6 +12,28 @@ new cron.CronJob('01 00 * * * *', function(){
     this.newsListToJsonFile();
 }, null, true, 'Asia/Seoul');
 
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: News
+ *   description: News 탭 관련 API
+ */
+
+/**
+ * @swagger
+ * /news/getList:
+ *   get:
+ *     summary: Get News List with Image Url
+ *     description: Main News List
+ *     tags: [News]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Success get News
+*/
 // 배구 뉴스 리스트 가져오기
 exports.getMainNewsList = function(req, res) {
     var fileRead = fs.readFileSync('./newsFile/news.json', 'utf8');
@@ -19,6 +41,25 @@ exports.getMainNewsList = function(req, res) {
     res.send(newsData);
 };
 
+/**
+ * @swagger
+ * /news/getList/{team}:
+ *   get:
+ *     summary: Get News List by Team Name
+ *     description: Main News List by Team Name
+ *     tags: [News]
+ *     parameters:
+ *       - name: team
+ *         description: Team name
+ *         in: path
+ *         type: string
+ *         required: true
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Success get News
+ */
 //팀이름으로 뉴스 검색
 exports.getNewsListByTeam = function(req, res){
     var teamName = req.params.team+' 배구단';

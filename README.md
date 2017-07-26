@@ -12,3 +12,6 @@ and set value for your server enviroment.
 
 ## Server start  
 `node app.js`
+
+## API Docs (Swagger)
+http://localhost:3000/api-docs/
