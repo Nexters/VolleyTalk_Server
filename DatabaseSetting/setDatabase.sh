@@ -92,6 +92,7 @@ CREATE INDEX idx_tb_comments ON volleytalk.tb_team_comments ( postseq );
 CREATE TABLE volleytalk.tb_players (
 	seq                  int  NOT NULL  AUTO_INCREMENT,
 	teamseq              int  NOT NULL  ,
+	backnumber           int  NOT NULL  ,
 	name                 varchar(10)  NOT NULL  ,
 	birth                varchar(15)    ,
 	physical             varchar(10)    ,
