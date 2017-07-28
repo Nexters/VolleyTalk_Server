@@ -16,6 +16,10 @@ module.exports = function(sequelize, DataTypes) {
         key: 'seq'
       }
     },
+    backnumber: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false
+    },
     name: {
       type: DataTypes.STRING(10),
       allowNull: false
@@ -25,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     physical: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(15),
       allowNull: true
     },
     position: {
@@ -38,14 +42,25 @@ module.exports = function(sequelize, DataTypes) {
     },
     likecount: {
       type: DataTypes.INTEGER(11),
-      allowNull: true
+      allowNull: true,
+      defaultValue: '0'
     },
     postcount: {
       type: DataTypes.INTEGER(11),
-      allowNull: true
+      allowNull: true,
+      defaultValue: '0'
     },
     profileimg_url: {
       type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
       allowNull: true
     }
   }, {

@@ -10,7 +10,8 @@ read password
 
 mysql -u $account -p$password -e "
 
-create database volleytalk DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;;
+drop database volleytalk;
+create database volleytalk DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE volleytalk.tb_userinfos (
 	seq                  int  NOT NULL  AUTO_INCREMENT,
@@ -19,11 +20,10 @@ CREATE TABLE volleytalk.tb_userinfos (
 	email                varchar(100)    ,
 	profileimg_thumb     varchar(100)    ,
 	bgimg                varchar(100)    ,
-	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
 	likecount            int   DEFAULT 0 ,
 	commentcount         int   DEFAULT 0 ,
-	createdAt            datetime  NOT NULL,
-	updatedAt            datetime  NOT NULL,
+	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq, userid ),
 	UNIQUE KEY ( userid )
  );
@@ -34,13 +34,24 @@ CREATE TABLE volleytalk.tb_likes (
 	liketype             varchar(10)  NOT NULL  ,
 	typeseq              int  NOT NULL  ,
 	userid               varchar(50)  NOT NULL  ,
-	regdate              datetime   DEFAULT CURRENT_TIMESTAMP ,
-	createdAt            datetime  NOT NULL,
-	updatedAt            datetime  NOT NULL,
+	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq ),
 	FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos ( userid )
  );
 CREATE INDEX idx_tb_like ON volleytalk.tb_likes ( userid );
+
+CREATE TABLE volleytalk.tb_follows (
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	followtype           varchar(10)  NOT NULL  ,
+	typeseq              int  NOT NULL  ,
+	userid               varchar(50)  NOT NULL  ,
+	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updatedAt            datetime  NULL,
+	PRIMARY KEY ( seq ),
+	FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos ( userid )
+ );
+CREATE INDEX idx_tb_follows ON volleytalk.tb_follows ( userid );
 
 
 CREATE TABLE volleytalk.tb_teams (
@@ -67,8 +78,8 @@ CREATE TABLE volleytalk.tb_teams (
 	img_url              varchar(100)    ,
 	img_url_thumb        varchar(100)    ,
 	author               varchar(50)  NOT NULL  ,
-	likecount            int    ,
-	commentcount         int    ,
+	likecount            int   DEFAULT 0  ,
+	commentcount         int   DEFAULT 0  ,
 	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq ),
@@ -95,11 +106,11 @@ CREATE TABLE volleytalk.tb_players (
 	backnumber           int  NOT NULL  ,
 	name                 varchar(10)  NOT NULL  ,
 	birth                varchar(15)    ,
-	physical             varchar(10)    ,
+	physical             varchar(15)    ,
 	position             varchar(10)    ,
 	gender               varchar(1)  NOT NULL  ,
-	likecount            int    ,
-	postcount            int    ,
+	likecount            int   DEFAULT 0  ,
+	postcount            int   DEFAULT 0  ,
 	profileimg_url       varchar(100)    ,
 	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updatedAt            datetime  NULL,
@@ -107,7 +118,6 @@ CREATE TABLE volleytalk.tb_players (
 	FOREIGN KEY ( teamseq ) REFERENCES volleytalk.tb_teams ( seq )
  );
 CREATE INDEX idx_tb_player ON volleytalk.tb_players ( teamseq );
-
 
 CREATE TABLE volleytalk.tb_player_posts ( 
 	seq                  int  NOT NULL  AUTO_INCREMENT,
@@ -117,8 +127,8 @@ CREATE TABLE volleytalk.tb_player_posts (
 	img_url              varchar(100)    ,
 	img_url_thumb        varchar(100)    ,
 	author               varchar(50)  NOT NULL  ,
-	likecount            int    ,
-	commentcount         int    ,
+	likecount            int   DEFAULT 0  ,
+	commentcount         int   DEFAULT 0  ,
 	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq ),

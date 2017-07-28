@@ -8,25 +8,23 @@ var cron = require('cron');
 var fs = require('fs');
 
 //1시간 단위로 뉴스를 json파일로 저장함
-new cron.CronJob('01 00 * * * *', function(){
-    this.newsListToJsonFile();
+new cron.CronJob('00 01 * * * *', function(){
+    exports.newsListToJsonFile();
 }, null, true, 'Asia/Seoul');
-
-
 
 /**
  * @swagger
  * tags:
  *   name: News
- *   description: News 탭 관련 API
+ *   description: News 관련 API
  */
 
 /**
  * @swagger
- * /news/getList:
+ * /news/list:
  *   get:
- *     summary: Get News List with Image Url
- *     description: Main News List
+ *     summary: 메인 뉴스 리스트 가져오기
+ *     description: 이미지 URL을 포함한 뉴스 10개 리스트 가져오기
  *     tags: [News]
  *     produces:
  *       - application/json
@@ -43,10 +41,10 @@ exports.getMainNewsList = function(req, res) {
 
 /**
  * @swagger
- * /news/getList/{team}:
+ * /news/list/{team}:
  *   get:
- *     summary: Get News List by Team Name
- *     description: Main News List by Team Name
+ *     summary: 팀 이름에 따른 뉴스리스트
+ *     description: 팀이름으로 뉴스리스트 불러오기
  *     tags: [News]
  *     parameters:
  *       - name: team
@@ -54,6 +52,7 @@ exports.getMainNewsList = function(req, res) {
  *         in: path
  *         type: string
  *         required: true
+ *         defaultValue : 대한항공 점보스
  *     produces:
  *       - application/json
  *     responses:

@@ -24,10 +24,14 @@ module.exports = function(sequelize, DataTypes) {
         key: 'userid'
       }
     },
-    regdate: {
+    createdAt: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: 'tb_likes'

@@ -1,28 +1,28 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('tb_team_comments', {
+  return sequelize.define('tb_follows', {
     seq: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    postseq: {
+    followtype: {
+      type: DataTypes.STRING(10),
+      allowNull: false
+    },
+    typeseq: {
       type: DataTypes.INTEGER(11),
+      allowNull: false
+    },
+    userid: {
+      type: DataTypes.STRING(50),
       allowNull: false,
       references: {
-        model: 'tb_team_posts',
-        key: 'seq'
+        model: 'tb_userinfos',
+        key: 'userid'
       }
-    },
-    comment: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    author: {
-      type: DataTypes.STRING(50),
-      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -34,6 +34,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     }
   }, {
-    tableName: 'tb_team_comments'
+    tableName: 'tb_follows'
   });
 };
