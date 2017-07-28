@@ -1,4 +1,4 @@
-var config = require('../config/config.json');
+var config = null;
 var request = require('sync-request');
 var async = require('async');
 var _ = require('underscore');
@@ -6,6 +6,10 @@ var urlMetadata = require('url-metadata');
 var moment = require('moment');
 var cron = require('cron');
 var fs = require('fs');
+
+exports.init = function(app){
+   config = app.get('config');
+};
 
 //1시간 단위로 뉴스를 json파일로 저장함
 new cron.CronJob('00 01 * * * *', function(){
