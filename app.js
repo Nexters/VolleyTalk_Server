@@ -16,13 +16,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 
-app.set('config', require('./config/config.json'));
+//app.set('config', require('./config/config.json'));
+
+//인증 인터셉터 설정
+require('./interceptor/interceptor').init(app);
 
 //라우터 설정
 require('./routes/index').init(app);
-
-//인터셉터 설정
-//require('./interceptor/interceptor').init(app);
 
 //포트 설정
 app.set('port', 3000);

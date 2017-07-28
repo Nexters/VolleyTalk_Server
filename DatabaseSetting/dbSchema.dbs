@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <project name="VolleyTalk" id="Project_435087f" template="Default" database="MySql" >
 	<schema name="volleytalk" schemaname="volleytalk" >
-		<table name="tb_cheering" >
-			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
-			<column name="playerseq" type="int" jt="4" mandatory="y" />
-			<column name="comment" type="varchar" length="100" jt="12" mandatory="y" />
-			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="regdate" type="datetime" jt="93" >
+		<table name="tb_cheerings" >
+			<column name="seq" type="int" length="10" decimal="0" jt="4" mandatory="y" autoincrement="y" />
+			<column name="playerseq" type="int" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="comment" type="varchar" length="100" decimal="0" jt="12" mandatory="y" />
+			<column name="author" type="varchar" length="50" decimal="0" jt="12" mandatory="y" />
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
 				<defo>CURRENT_TIMESTAMP</defo>
 			</column>
-			<index name="pk_tb_cheering" unique="PRIMARY_KEY" >
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
+			<index name="pk_tb_cheerings" unique="PRIMARY_KEY" >
 				<column name="seq" />
 			</index>
 			<index name="idx_tb_cheering" unique="NORMAL" >
 				<column name="playerseq" />
 			</index>
-			<fk name="fk_tb_cheering_tb_player" to_schema="volleytalk" to_table="tb_player" >
+			<fk name="tb_cheerings_ibfk_1" to_schema="volleytalk" to_table="tb_players" >
 				<fk_column name="playerseq" pk="seq" />
+			</fk>
+		</table>
+		<table name="tb_follows" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="followtype" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="typeseq" type="int" jt="4" mandatory="y" />
+			<column name="userid" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
+			<index name="pk_tb_follows" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="idx_tb_follows" unique="NORMAL" >
+				<column name="userid" />
+			</index>
+			<fk name="fk_tb_follows_tb_userinfos" to_schema="volleytalk" to_table="tb_userinfos" >
+				<fk_column name="userid" pk="userid" />
 			</fk>
 			<storage><![CDATA[engine=InnoDB]]></storage>
 		</table>
-		<table name="tb_like" >
+		<table name="tb_likes" >
 			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
 			<column name="liketype" type="varchar" length="10" jt="12" mandatory="y" >
 				<comment><![CDATA[user / team / player / post / comment]]></comment>
@@ -29,39 +49,18 @@
 				<comment><![CDATA[user seq / team seq / player seq / post seq / comment seq /]]></comment>
 			</column>
 			<column name="userid" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="regdate" type="datetime" jt="93" >
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
 				<defo>CURRENT_TIMESTAMP</defo>
 			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
 			<index name="pk_tb_like" unique="PRIMARY_KEY" >
 				<column name="seq" />
 			</index>
 			<index name="idx_tb_like" unique="NORMAL" >
 				<column name="userid" />
 			</index>
-			<fk name="fk_tb_like_tb_userinfo" to_schema="volleytalk" to_table="tb_userinfo" >
+			<fk name="tb_likes_ibfk_1" to_schema="volleytalk" to_table="tb_userinfos" >
 				<fk_column name="userid" pk="userid" />
-			</fk>
-			<storage><![CDATA[engine=InnoDB]]></storage>
-		</table>
-		<table name="tb_player" >
-			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
-			<column name="teamseq" type="int" length="5" jt="4" mandatory="y" />
-			<column name="name" type="varchar" length="10" jt="12" mandatory="y" />
-			<column name="birth" type="varchar" length="15" jt="12" />
-			<column name="physical" type="varchar" length="10" jt="12" />
-			<column name="position" type="varchar" length="10" jt="12" />
-			<column name="gender" type="varchar" length="1" jt="12" mandatory="y" />
-			<column name="likecount" type="int" jt="4" />
-			<column name="postcount" type="int" jt="4" />
-			<column name="profileimg_url" type="varchar" length="100" jt="12" />
-			<index name="pk_tb_player" unique="PRIMARY_KEY" >
-				<column name="seq" />
-			</index>
-			<index name="idx_tb_player" unique="NORMAL" >
-				<column name="teamseq" />
-			</index>
-			<fk name="fk_tb_player_tb_team" to_schema="volleytalk" to_table="tb_team" >
-				<fk_column name="teamseq" pk="seq" />
 			</fk>
 			<storage><![CDATA[engine=InnoDB]]></storage>
 		</table>
@@ -72,9 +71,10 @@
 			</column>
 			<column name="comment" type="varchar" length="100" jt="12" mandatory="y" />
 			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="regdate" type="datetime" jt="93" mandatory="y" >
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
 				<defo>CURRENT_TIMESTAMP</defo>
 			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
 			<index name="pk_tb_comments_0" unique="PRIMARY_KEY" >
 				<column name="seq" />
 			</index>
@@ -93,36 +93,55 @@
 			<column name="img_url" type="varchar" length="100" jt="12" />
 			<column name="img_url_thumb" type="varchar" length="100" jt="12" />
 			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="likecount" type="int" jt="4" />
-			<column name="commentcount" type="int" jt="4" />
-			<column name="regdate" type="datetime" jt="93" >
-				<defo>CURRENT_DATE</defo>
+			<column name="likecount" type="int" jt="4" >
+				<defo>0</defo>
 			</column>
+			<column name="commentcount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
 			<index name="pk_tb_posts_0" unique="PRIMARY_KEY" >
 				<column name="seq" />
 			</index>
 			<index name="idx_tb_posts_0" unique="NORMAL" >
 				<column name="playerseq" />
 			</index>
-			<fk name="fk_tb_player_posts" to_schema="volleytalk" to_table="tb_player" >
+			<fk name="tb_player_posts_ibfk_1" to_schema="volleytalk" to_table="tb_players" >
 				<fk_column name="playerseq" pk="seq" />
 			</fk>
 		</table>
-		<table name="tb_team" >
+		<table name="tb_players" >
 			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
-			<column name="name" type="varchar" length="30" jt="12" mandatory="y" />
+			<column name="teamseq" type="int" length="5" jt="4" mandatory="y" />
+			<column name="name" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="birth" type="varchar" length="15" jt="12" />
+			<column name="physical" type="varchar" length="15" decimal="0" jt="12" />
+			<column name="position" type="varchar" length="10" jt="12" />
 			<column name="gender" type="varchar" length="1" jt="12" mandatory="y" />
-			<column name="extablish" type="varchar" length="10" jt="12" mandatory="y" />
-			<column name="homeground" type="varchar" length="10" jt="12" mandatory="y" />
 			<column name="likecount" type="int" jt="4" >
 				<defo>0</defo>
 			</column>
 			<column name="postcount" type="int" jt="4" >
 				<defo>0</defo>
 			</column>
-			<index name="pk_tb_team" unique="PRIMARY_KEY" >
+			<column name="profileimg_url" type="varchar" length="100" jt="12" />
+			<column name="backnumber" type="int" length="10" decimal="0" jt="4" mandatory="y" />
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
+			<index name="pk_tb_player" unique="PRIMARY_KEY" >
 				<column name="seq" />
 			</index>
+			<index name="idx_tb_player" unique="NORMAL" >
+				<column name="teamseq" />
+			</index>
+			<fk name="fk_tb_players_tb_teams" to_schema="volleytalk" to_table="tb_teams" >
+				<fk_column name="teamseq" pk="seq" />
+			</fk>
 			<storage><![CDATA[engine=InnoDB]]></storage>
 		</table>
 		<table name="tb_team_comments" >
@@ -132,9 +151,10 @@
 			</column>
 			<column name="comment" type="varchar" length="100" jt="12" mandatory="y" />
 			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="regdate" type="datetime" jt="93" mandatory="y" >
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
 				<defo>CURRENT_TIMESTAMP</defo>
 			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
 			<index name="pk_tb_comments" unique="PRIMARY_KEY" >
 				<column name="seq" />
 			</index>
@@ -154,35 +174,67 @@
 			<column name="img_url" type="varchar" length="100" jt="12" />
 			<column name="img_url_thumb" type="varchar" length="100" jt="12" />
 			<column name="author" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="likecount" type="int" jt="4" />
-			<column name="commentcount" type="int" jt="4" />
-			<column name="regdate" type="datetime" jt="93" >
-				<defo>CURRENT_DATE</defo>
-			</column>
-			<index name="pk_tb_team_posts" unique="PRIMARY_KEY" >
-				<column name="seq" />
-			</index>
-			<fk name="fk_tb_team_posts_tb_team" to_schema="volleytalk" to_table="tb_team" >
-				<fk_column name="teamseq" pk="seq" />
-			</fk>
-			<storage><![CDATA[engine=InnoDB]]></storage>
-		</table>
-		<table name="tb_userinfo" >
-			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
-			<column name="userid" type="varchar" length="50" jt="12" mandatory="y" />
-			<column name="nickname" type="varchar" length="100" jt="12" />
-			<column name="email" type="varchar" length="100" jt="12" />
-			<column name="profileimg_thumb" type="varchar" length="100" jt="12" />
-			<column name="bgimg" type="varchar" length="100" jt="12" />
-			<column name="regdate" type="datetime" jt="93" >
-				<defo>CURRENT_TIMESTAMP</defo>
-			</column>
 			<column name="likecount" type="int" jt="4" >
 				<defo>0</defo>
 			</column>
 			<column name="commentcount" type="int" jt="4" >
 				<defo>0</defo>
 			</column>
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
+			<index name="pk_tb_team_posts" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<index name="teamseq" unique="NORMAL" >
+				<column name="teamseq" />
+			</index>
+			<fk name="tb_team_posts_ibfk_1" to_schema="volleytalk" to_table="tb_teams" >
+				<fk_column name="teamseq" pk="seq" />
+			</fk>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_teams" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="name" type="varchar" length="30" jt="12" mandatory="y" />
+			<column name="gender" type="varchar" length="1" jt="12" mandatory="y" />
+			<column name="extablish" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="homeground" type="varchar" length="10" jt="12" mandatory="y" />
+			<column name="likecount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="postcount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="stadium" type="varchar" length="10" decimal="0" jt="12" mandatory="y" />
+			<column name="teamlogo" type="varchar" length="20" decimal="0" jt="12" mandatory="y" />
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
+			<index name="pk_tb_team" unique="PRIMARY_KEY" >
+				<column name="seq" />
+			</index>
+			<storage><![CDATA[engine=InnoDB]]></storage>
+		</table>
+		<table name="tb_userinfos" >
+			<column name="seq" type="int" jt="4" mandatory="y" autoincrement="y" />
+			<column name="userid" type="varchar" length="50" jt="12" mandatory="y" />
+			<column name="nickname" type="varchar" length="100" jt="12" />
+			<column name="email" type="varchar" length="100" jt="12" />
+			<column name="profileimg_thumb" type="varchar" length="100" jt="12" />
+			<column name="bgimg" type="varchar" length="100" jt="12" />
+			<column name="likecount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="commentcount" type="int" jt="4" >
+				<defo>0</defo>
+			</column>
+			<column name="createdAt" type="datetime" length="19" decimal="0" jt="93" mandatory="y" >
+				<defo>CURRENT_TIMESTAMP</defo>
+			</column>
+			<column name="updatedAt" type="datetime" length="19" decimal="0" jt="93" />
 			<index name="pk_tb_user" unique="PRIMARY_KEY" >
 				<column name="seq" />
 				<column name="userid" />
@@ -195,15 +247,16 @@
 	</schema>
 	<connector name="ssd" database="MySql" driver_class="com.mysql.jdbc.Driver" driver_jar="mysql-connector-java-5.1.40-bin.jar" driver_desc="Standard" host="localhost" port="3306" user="root" />
 	<layout name="Default Layout" id="Layout_2758cd4" show_relation="columns" >
-		<entity schema="volleytalk" name="tb_team" color="c1d8ee" x="240" y="64" />
-		<entity schema="volleytalk" name="tb_player" color="c1d8ee" x="224" y="304" />
-		<entity schema="volleytalk" name="tb_cheering" color="c1d8ee" x="416" y="544" />
-		<entity schema="volleytalk" name="tb_like" color="c1d8ee" x="80" y="336" />
-		<entity schema="volleytalk" name="tb_userinfo" color="c1d8ee" x="48" y="64" />
-		<entity schema="volleytalk" name="tb_team_posts" color="c1d8ee" x="448" y="48" />
-		<entity schema="volleytalk" name="tb_team_comments" color="c1d8ee" x="608" y="80" />
-		<entity schema="volleytalk" name="tb_player_comments" color="c1d8ee" x="624" y="304" />
-		<entity schema="volleytalk" name="tb_player_posts" color="c1d8ee" x="416" y="304" />
+		<entity schema="volleytalk" name="tb_userinfos" color="c1d8ee" x="48" y="64" />
+		<entity schema="volleytalk" name="tb_team_comments" color="c1d8ee" x="784" y="64" />
+		<entity schema="volleytalk" name="tb_team_posts" color="c1d8ee" x="576" y="64" />
+		<entity schema="volleytalk" name="tb_teams" color="c1d8ee" x="400" y="64" />
+		<entity schema="volleytalk" name="tb_player_comments" color="c1d8ee" x="816" y="336" />
+		<entity schema="volleytalk" name="tb_player_posts" color="c1d8ee" x="592" y="336" />
+		<entity schema="volleytalk" name="tb_players" color="c1d8ee" x="400" y="336" />
+		<entity schema="volleytalk" name="tb_cheerings" color="c1d8ee" x="96" y="384" />
+		<entity schema="volleytalk" name="tb_follows" color="c1d8ee" x="240" y="224" />
+		<entity schema="volleytalk" name="tb_likes" color="c1d8ee" x="240" y="48" />
 		<script name="tb_cheering" id="Query_fd10f2" language="SQL" >
 			<string><![CDATA[CREATE TABLE volleytalk.tb_cheering ( 
 	seq                  int  NOT NULL  AUTO_INCREMENT,
@@ -217,6 +270,21 @@
 CREATE INDEX idx_tb_cheering ON volleytalk.tb_cheering ( playerseq );
 
 ALTER TABLE volleytalk.tb_cheering ADD CONSTRAINT fk_tb_cheering_tb_player FOREIGN KEY ( playerseq ) REFERENCES volleytalk.tb_player( seq ) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+]]></string>
+		</script>
+		<script name="tb_follows" id="Query_1c4b44d" language="SQL" >
+			<string><![CDATA[CREATE TABLE volleytalk.tb_follows ( 
+	seq                  int  NOT NULL  AUTO_INCREMENT,
+	followtype           varchar(10)  NOT NULL  ,
+	typeseq              int  NOT NULL  ,
+	userid               varchar(50)  NOT NULL  ,
+	CONSTRAINT pk_tb_follows PRIMARY KEY ( seq )
+ ) engine=InnoDB;
+
+CREATE INDEX idx_tb_follows ON volleytalk.tb_follows ( userid );
+
+ALTER TABLE volleytalk.tb_follows ADD CONSTRAINT fk_tb_follows_tb_userinfos FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos( userid ) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ]]></string>
 		</script>
