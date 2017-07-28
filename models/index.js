@@ -1,9 +1,9 @@
 //sequelize-auto -o "./models" -d volleytalk -h localhost -u root -p 3306 -x '' -e mysql
 var Sequelize = require('sequelize');
-var config = require('../config/config.json');
-var sequelize = null;
+var config, sequelize;
 
 exports.init = function(app) {
+    config = app.get('config');
     sequelize = new Sequelize(config.db.database, config.db.username, config.db.password, config.db.config);
     app.set('sequelize', sequelize);
     app.set('models', registModels(sequelize));

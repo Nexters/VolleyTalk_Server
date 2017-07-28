@@ -33,6 +33,7 @@ exports.init = function(app) {
 
     //route 파일 init
     index.init(app);
+    news.init(app);
     team.init(app);
     player.init(app);
 
