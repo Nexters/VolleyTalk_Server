@@ -12,7 +12,7 @@ exports.init = function(app){
 };
 
 //1시간 단위로 뉴스를 json파일로 저장함
-new cron.CronJob('00 01 * * * *', function(){
+new cron.CronJob('00 00 * * * *', function(){
     exports.newsListToJsonFile();
 }, null, true, 'Asia/Seoul');
 
@@ -96,12 +96,13 @@ exports.newsListToJsonFile = function(){
         function(next){task(1,next)},
         function(next){task(2,next)},
         function(next){task(3,next)},
-        function(next){task(4,next)}
+        function(next){task(4,next)},
+        function(next){task(5,next)}
     ];
 
     //async 모듈을 통해 동기식으로 데이터를 가져와서 기사 이미지 셋팅(여기서 소요시간이 조금 발생함 -> 차후 개선)
     async.parallel(imageSetTask, function (err, results) {
-        for(var i=0; i<5; i++){
+        for(var i=0; i<6; i++){
             temp[i].imgurl = results[i].replace("https","http");
         }
         response.items = temp;
@@ -124,6 +125,8 @@ var getNewsDataFromAPI = function(keyword,itemCount,start){
 
     for(var i=0; i<itemCount; i++){
         response.items[i].pubDate = moment(response.items[i].pubDate).format('YYYY-MM-DD hh:mm:ss');
+        response.items[i].title = response.items[i].title.replace(/(<([^>]+)>)/ig,"");
+        response.items[i].description = response.items[i].description.replace(/(<([^>]+)>)/ig,"");
     }
     response.items = _.sortBy(response.items, 'pubDate').reverse();
     return response;
