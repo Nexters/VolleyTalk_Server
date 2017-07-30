@@ -30,8 +30,6 @@
     "sequelize": "^4.4.0",
     "serve-favicon": "~2.4.2",
     "swagger-express-jsdoc": "^1.0.3",
-    "swagger-jsdoc": "^1.9.7",
-    "swagger-ui-express": "^2.0.4",
     "sync-request": "^4.1.0",
     "underscore": "^1.8.3",
     "url-metadata": "^2.1.7"
