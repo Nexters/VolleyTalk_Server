@@ -20,7 +20,9 @@ var index = require('../models/index');
 var news = require('./news');
 var team = require('./team');
 var player = require('./player');
+var follow = require('./follow');
 //var like = require('./like');
+
 //var user = require('./user');
 
 exports.init = function(app) {
@@ -36,6 +38,7 @@ exports.init = function(app) {
     news.init(app);
     team.init(app);
     player.init(app);
+    follow.init(app);
 
     //뉴스 API
     app.get('/news/list', news.getMainNewsList);           //뉴스탭에서 사용할 뉴스리스트 가져오기
@@ -45,6 +48,12 @@ exports.init = function(app) {
     app.get('/team/list/:gender', team.getTeamList);  //구단 정보 가져오기
 
     //선수 API
-    app.get('/player/list/:gender', player.getPlayerList);  //구단 정보 가져오기
-    app.get('/player/info/:playerseq', player.getPlayerInfo);  //구단 정보 가져오기
+    app.get('/player/list/:gender', player.getPlayerList);  //선수 리스트
+    app.get('/player/info/:playerseq', player.getPlayerInfo);  //선수 정보 가져오기
+
+    //팔로우 API
+    app.get('/follow/list', follow.getFollowList);
+    app.post('/follow/apply', follow.postFollow);
+
+
 };

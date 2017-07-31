@@ -1,7 +1,11 @@
 //TODO :유저 인증 체크
 var auth = function(){
     return function(req,res,next){
-        //var userid = req.cookies.userid;
+        if(process.env.NODE_ENV == 'prod'){
+
+        }else{
+            req.session.userid = 'testAccount';
+        }
         next();
     }
 };

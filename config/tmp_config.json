@@ -14,6 +14,7 @@
       "idle": 10000
     }
   },
+  "sessionKey": "Session Key"
   "NewsAPI" : {
     "naverClientId" : "Naver API Client ID",
     "naverClientSecret" : "Naver API Client Secret"

@@ -10,7 +10,6 @@ read password
 
 mysql -u $account -p$password -e "
 
-drop database volleytalk;
 create database volleytalk DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE volleytalk.tb_userinfos (
@@ -37,7 +36,8 @@ CREATE TABLE volleytalk.tb_likes (
 	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq ),
-	FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos ( userid )
+	FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos ( userid ),
+	UNIQUE(followtype,typeseq,userid)
  );
 CREATE INDEX idx_tb_like ON volleytalk.tb_likes ( userid );
 
@@ -49,7 +49,8 @@ CREATE TABLE volleytalk.tb_follows (
 	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq ),
-	FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos ( userid )
+	FOREIGN KEY ( userid ) REFERENCES volleytalk.tb_userinfos ( userid ),
+	UNIQUE(followtype,typeseq,userid)
  );
 CREATE INDEX idx_tb_follows ON volleytalk.tb_follows ( userid );
 
