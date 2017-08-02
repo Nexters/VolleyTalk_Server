@@ -22,7 +22,7 @@ CREATE TABLE volleytalk.tb_userinfos (
 	likecount            int   DEFAULT 0 ,
 	postcount            int   DEFAULT 0 ,
 	followercount        int   DEFAULT 0 ,
-	followingcount      int   DEFAULT 0 ,
+	followingcount       int   DEFAULT 0 ,
 	createdAt            datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updatedAt            datetime  NULL,
 	PRIMARY KEY ( seq, userid ),

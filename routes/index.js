@@ -21,9 +21,12 @@ var news = require('./news');
 var team = require('./team');
 var player = require('./player');
 var follow = require('./follow');
-//var like = require('./like');
+var like = require('./like');
 
 //var user = require('./user');
+//var post = require('./post');
+//var comment = require('./comment');
+//var cheering = require('./cheering');
 
 exports.init = function(app) {
     //swagger 설정
@@ -39,6 +42,7 @@ exports.init = function(app) {
     team.init(app);
     player.init(app);
     follow.init(app);
+    like.init(app);
 
     //뉴스 API
     app.get('/news/list', news.getMainNewsList);           //뉴스탭에서 사용할 뉴스리스트 가져오기
@@ -55,5 +59,8 @@ exports.init = function(app) {
     app.get('/follow/list', follow.getFollowList);
     app.post('/follow/apply', follow.postFollow);
 
+    //라이크 API
+    app.get('/like/list', like.getLikeList);
+    app.post('/like/apply', like.postLike);
 
 };
