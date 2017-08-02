@@ -66,13 +66,13 @@ exports.getMainNewsList = function(req, res) {
 //팀이름으로 뉴스 검색
 exports.getNewsListByTeam = function(req, res){
     var teamName = req.params.team+' 배구단';
-    var response = getNewsDataFromAPI(teamName,10,1);
+    var response = getNewsDataFromAPI(teamName,15,1);
     res.send(response);
 };
 
 exports.newsListToJsonFile = function(){
     //배구 뉴스 가져오기
-    var response = getNewsDataFromAPI("배구", 10, 1);
+    var response = getNewsDataFromAPI("배구", 15, 1);
 
     //시간순으로 정렬
     var temp = response.items;

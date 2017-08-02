@@ -2,7 +2,9 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var bodyParser = require('body-parser');
+var config = require('./config/config.json');
 var fs = require('fs');
 var app = express();
 
@@ -12,11 +14,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set('config', config);
+app.use(session({
+    secret: config.sessionKey,
+    resave: false,
+    saveUninitialized: true
+}));
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-
-app.set('config', require('./config/config.json'));
+process.env.NODE_ENV = ( process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'prod' ) ? 'prod' : 'dev';
 
 //인증 인터셉터 설정
 require('./interceptor/interceptor').init(app);

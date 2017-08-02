@@ -14,6 +14,7 @@ var registModels = function(sequelize) {
     var Player = sequelize.import(__dirname +'/../models/tb_players');
     var Follow = sequelize.import(__dirname +'/../models/tb_follows');
     var Like   = sequelize.import(__dirname +'/../models/tb_likes');
+    var User   = sequelize.import(__dirname +'/../models/tb_userinfos');
 
     Team.hasMany(Player,  {foreginKey: 'teamseq'});
     Team.hasMany(Like,    {foreignKey: 'typeseq', as: 'like'});
@@ -26,6 +27,7 @@ var registModels = function(sequelize) {
         Team: Team,
         Player: Player,
         Follow: Follow,
-        Like: Like
+        Like: Like,
+        User: User
     };
 };

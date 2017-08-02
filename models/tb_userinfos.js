@@ -34,7 +34,17 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: '0'
     },
-    commentcount: {
+    postcount: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      defaultValue: '0'
+    },
+    followercount: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      defaultValue: '0'
+    },
+    followingcount: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
       defaultValue: '0'

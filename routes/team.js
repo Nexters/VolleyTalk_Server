@@ -34,7 +34,7 @@ exports.init = function(app){
  */
 exports.getTeamList = function(req, res){
     var gender = req.params.gender;
-    var userid = 'testAccount'; //req.cookie.userid;
+    var userid = req.session.userid;
 
     models.Team.findAll({
         where: {gender: gender},

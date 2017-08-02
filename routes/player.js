@@ -35,7 +35,7 @@ exports.init = function(app){
  */
 exports.getPlayerList = function(req, res){
     var gender = req.params.gender;
-    var userid = 'testAccount'; //req.cookie.userid;
+    var userid = req.session.userid;
 
     models.Player.findAll({
         attributes: ['seq','teamseq','backnumber','name','physical','likecount','postcount'],
@@ -69,7 +69,7 @@ exports.getPlayerList = function(req, res){
  */
 exports.getPlayerInfo = function(req,res){
     var playerseq = req.params.playerseq;
-    var userid = 'testAccount'; //req.cookie.userid;
+    var userid = req.session.userid;
 
     models.Player.findOne({
         attributes: ['seq','teamseq','backnumber','name','physical','likecount','postcount'],
