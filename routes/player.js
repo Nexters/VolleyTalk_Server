@@ -43,7 +43,17 @@ exports.getPlayerList = function(req, res){
         include: [{model: models.Like, as: 'like', attributes: ['seq'], where: {liketype: 'player', userid: userid}, required: false},
                   {model: models.Follow, as: 'follow', attributes: ['seq'], where: {followtype: 'player', userid: userid}, required: false}]
     }).then(function(players){
-        res.send(_.groupBy(players,'teamseq'));
+        var groupBy = _.groupBy(players,'teamseq');
+        var result = [];
+
+        for( var key in groupBy ) {
+            var tmp = {};
+            tmp.team = key;
+            tmp.player = groupBy[key];
+            result.push(tmp);
+        }
+
+        res.send(result);
     });
 };
 
