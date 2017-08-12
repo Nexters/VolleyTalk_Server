@@ -40,15 +40,17 @@ app.listen(app.get('port'), function(){
     console.log('Volley Talk API server start : '+app.get('port'));
 });
 
-//서버 최초 실행시 news.json파일 있는지 확인해서 없으면 생성
-var newsFileSetUp = function(){
-    if(!fs.existsSync('./newsFile')){
-        fs.mkdirSync('./newsFile');
-        fs.openSync('./newsFile/news.json', 'w');
-        require('./routes/news').newsListToJsonFile();
-    }
-};
-newsFileSetUp();
+//news.json파일 생성
+if(!fs.existsSync('./newsFile')){
+    fs.mkdirSync('./newsFile');
+    require('./routes/news').newsListToJsonFile();
+}
+
+//이미지 폴더 생성
+if(!fs.existsSync('./img') || !fs.existsSync('./img_thumb')){
+    fs.mkdirSync('./img');
+    fs.mkdirSync('./img_thumb');
+}
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
