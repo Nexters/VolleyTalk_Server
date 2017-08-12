@@ -71,6 +71,7 @@ exports.getNewsListByTeam = function(req, res){
 };
 
 exports.newsListToJsonFile = function(){
+
     //배구 뉴스 가져오기
     var response = getNewsDataFromAPI("배구", 15, 1);
 
@@ -116,6 +117,7 @@ exports.newsListToJsonFile = function(){
 
 var getNewsDataFromAPI = function(keyword,itemCount,start){
     var url = 'https://openapi.naver.com/v1/search/news.json?query='+keyword+'&display='+itemCount+'&start='+start+'&sort=sim';
+
     var response = JSON.parse(request('GET', encodeURI(url) ,
         {'headers': {
             'X-Naver-Client-Id': config.NewsAPI.naverClientId,
@@ -128,6 +130,7 @@ var getNewsDataFromAPI = function(keyword,itemCount,start){
         response.items[i].title = response.items[i].title.replace(/(<([^>]+)>)/ig,"");
         response.items[i].description = response.items[i].description.replace(/(<([^>]+)>)/ig,"");
     }
+
     response.items = _.sortBy(response.items, 'pubDate').reverse();
     return response;
 };

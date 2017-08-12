@@ -44,7 +44,7 @@ exports.getLikeList = function(req,res){
  *     tags: [Like]
  *     parameters:
  *       - name: likeTypes
- *         description: 좋아요 타입
+ *         description: 좋아요 타입(user, team, player, teampost, playerpost)
  *         in: query
  *         type: string
  *         required: true
@@ -99,11 +99,41 @@ exports.postLike = function(req,res){
                                     }
                                 });
                             }else if(type == 'team'){
-
+                                models.Team.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.Team.update({likecount: count.dataValues.likecount - 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
                             }else if(type == 'player'){
-
-                            }else if(type == 'post'){
-
+                                models.Player.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.Player.update({likecount: count.dataValues.likecount - 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
+                            }else if(type == 'teampost'){
+                                models.TeamPost.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.TeamPost.update({likecount: count.dataValues.likecount - 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
+                            }else if(type == 'playerpost'){
+                                models.PlayerPost.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.PlayerPost.update({likecount: count.dataValues.likecount - 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
                             }
                             return true;
                         });
@@ -120,11 +150,41 @@ exports.postLike = function(req,res){
                                     }
                                 });
                             }else if(type == 'team'){
-
+                                models.Team.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.Team.update({likecount: count.dataValues.likecount + 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
                             }else if(type == 'player'){
-
-                            }else if(type == 'post'){
-
+                                models.Player.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.Player.update({likecount: count.dataValues.likecount + 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
+                            }else if(type == 'teampost'){
+                                models.TeamPost.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.TeamPost.update({likecount: count.dataValues.likecount + 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
+                            }else if(type == 'playerpost'){
+                                models.PlayerPost.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.likecount != 0) {
+                                        return models.PlayerPost.update({likecount: count.dataValues.likecount + 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return true;
+                                        });
+                                    }
+                                });
                             }
                             return true;
                         });

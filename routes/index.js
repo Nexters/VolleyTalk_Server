@@ -22,11 +22,12 @@ var team = require('./team');
 var player = require('./player');
 var follow = require('./follow');
 var like = require('./like');
+var post = require('./post');
+var user = require('./user');
 
-//var user = require('./user');
-//var post = require('./post');
 //var comment = require('./comment');
 //var cheering = require('./cheering');
+var multer = require('multer');
 
 exports.init = function(app) {
     //swagger 설정
@@ -43,10 +44,17 @@ exports.init = function(app) {
     player.init(app);
     follow.init(app);
     like.init(app);
+    post.init(app);
+    user.init(app);
+
+    //사용자 API
+    app.post('/user/login', user.userLogin);
+    app.post('/user/delete', user.userDelete);
 
     //뉴스 API
     app.get('/news/list', news.getMainNewsList);           //뉴스탭에서 사용할 뉴스리스트 가져오기
     app.get('/news/list/:team', news.getNewsListByTeam);   //팀 이름으로 뉴스리스트 가져오기
+    app.get('/news', news.newsListToJsonFile);
 
     //팀 API
     app.get('/team/list/:gender', team.getTeamList);  //구단 정보 가져오기
@@ -63,4 +71,17 @@ exports.init = function(app) {
     app.get('/like/list', like.getLikeList);
     app.post('/like/apply', like.postLike);
 
+    //포스트 API
+    app.get('/post/list', post.getPostList);
+    app.post('/post/apply/:filename', post.postPost);
+
+    app.post('/simpleupload', multer({ dest: '/tmp/upload/'}).single('file'), function(req,res){
+
+        console.log(req.body); //form fields
+
+        console.log(req.file); //form files
+
+        res.status(204).end();
+
+    });
 };

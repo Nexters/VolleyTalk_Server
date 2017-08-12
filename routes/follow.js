@@ -40,7 +40,7 @@ exports.getFollowList = function(req,res){
  * @swagger
  * /follow/apply:
  *   post:
- *     summary:
+ *     summary: follow 하기 / 취소하기
  *     description: follow 하기 / 취소하기
  *     tags: [Follow]
  *     parameters:
@@ -88,7 +88,6 @@ exports.postFollow = function(req,res){
                     return models.Follow.destroy(where, {transaction: t})
                         .then(function(follow){
                             if(type == 'user'){
-
                                 //상대방의 팔로우 카운트를 가져온다
                                 return models.User.findOne({attributes:['followercount'], where:{seq: seq}}, {transaction: t}).then(function(count){
                                     //상대방의 카운트가 0이 아니면
@@ -115,9 +114,7 @@ exports.postFollow = function(req,res){
                                 models.User.findOne({attributes:['followercount'], where:{seq: seq}}, {transaction: t}).then(function(count){
                                     if(count.dataValues.followercount != 0) {
                                         return models.User.update({followercount: count.dataValues.followercount + 1}, {
-                                            where: {seq: seq},
-                                            returning: false
-                                        }, {transaction: t}).then(function(updateRes){
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
                                             return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
                                                 return models.User.update({followingcount: count.dataValues.followingcount + 1}, {
                                                     where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
