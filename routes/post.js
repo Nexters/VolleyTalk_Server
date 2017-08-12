@@ -1,11 +1,14 @@
 var sequelize, models;
-var Q = require('Q');
+var Q = require('q');
 var multer = require('multer');
+var path = require('path');
+var gm = require('gm');
+
 exports.init = function(app){
     sequelize = app.get('sequelize');
     models = app.get('models');
 };
-var imagePath = "public/images";
+
 /**
  * @swagger
  * tags:
@@ -72,12 +75,115 @@ exports.getPostList = function(req, res){
   }
 };
 
-exports.postPost = function(req,res){
 
+/**
+ * @swagger
+ * /post/apply:
+ *   post:
+ *     summary: 포스트 작성
+ *     description: 포스트 작성
+ *     tags: [Post]
+ *     parameters:
+ *       - name: file
+ *         description: 이미지 파일
+ *         in: formData
+ *         type: file
+ *         required: false
+ *       - name: type
+ *         description: 포스트 타입(team, player)
+ *         in: formData
+ *         type: string
+ *         required: true
+ *         defaultValue: team
+ *       - name: seq
+ *         description: 포스트 seq
+ *         in: formData
+ *         type: int
+ *         required: true
+ *         defaultValue: 1
+ *       - name: title
+ *         description: 포스트 타이틀
+ *         in: formData
+ *         type: string
+ *         required: true
+ *         defaultValue: this is title
+ *       - name: contents
+ *         description: 포스트 컨텐츠
+ *         in: formData
+ *         type: string
+ *         required: true
+ *         defaultValue: this is content
+ *     consumes:
+ *       - multipart/form-data
+ *     produces:
+ *       - multipart/form-data
+ *     responses:
+ *       200:
+ *         description: Success Post post
+ */
+
+exports.postPost = function(req,res){
     upload(req, res).then(function (file) {
-        res.json(file);
+console.log(req.body);
+        var model = {
+            type: req.body.type,
+            seq: req.body.seq,
+            title: req.body.title,
+            contents: req.body.contents,
+            userid: req.session.userid
+        };
+
+        if(file != null) {
+            var thumbnail = file.path.replace('_','_thumb_');
+            gm(file.path).thumb(200,200, thumbnail, function(err){
+                if(err) console.log(err);
+                else {
+                    console.log('thumbnail create done : ' + thumbnail);
+                    model.img_url = file.path;
+                    model.img_url_thumb = thumbnail;
+                }
+            });
+        }
+
+        //Todo: 트랜잭션 걸기
+        if(model.type == 'team'){
+            model.teamseq = model.seq;
+            delete(model.seq);
+
+            models.TeamPost.create(
+                model
+            ).then(function(response){
+                return models.Team.findOne({attributes:['postcount'], where:{seq: seq}}).then(function(count) {
+                    return models.Team.update({postcount: count.dataValues.postcount + 1}, {
+                        where: {seq: seq}, returning: false}).then(function(response){
+                            console.log('team '+ response);
+                    });
+                });
+            });
+        }else if(model.type == 'player'){
+            model.playerseq = model.seq;
+            delete(model.seq);
+
+            models.PlayerPost.create(
+                model
+            ).then(function(response){
+                return models.Player.findOne({attributes:['postcount'], where:{seq: seq}}).then(function(count) {
+                    return models.Player.update({postcount: count.dataValues.postcount + 1}, {
+                        where: {seq: seq}, returning: false}).then(function(response){
+                        console.log('player '+ response);
+                    });
+                });
+            });
+        }else{
+            res.json({err: 'post type error'});
+        }
+        if(file != null) {
+            res.json(file);
+        }else{
+            res.send("ok");
+        }
     }, function (err) {
-        res.send(500, err);
+        res.send(err);
     });
 };
 
@@ -85,19 +191,22 @@ var upload = function (req, res) {
     var deferred = Q.defer();
     var storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, 'uploads/') // cb 콜백함수를 통해 전송된 파일 저장 디렉토리 설정
+            cb(null, 'img/');
         },
         filename: function (req, file, cb) {
-            cb(null, file.originalname) // cb 콜백함수를 통해 전송된 파일 이름 설정
-            //이미지파일 이름 설정
-            //
+            var time = new Date().valueOf();
+            var imageUrl = 'img_'+time + path.extname(file.originalname);
+            cb(null, imageUrl);
         }
     });
 
     var upload = multer({ storage: storage }).single('file');
     upload(req, res, function (err) {
-        if (err) deferred.reject();
-        else {deferred.resolve(req.file);}
+        if (err){
+            deferred.reject();
+        }else {
+            deferred.resolve(req.file);
+        }
     });
     return deferred.promise;
 };

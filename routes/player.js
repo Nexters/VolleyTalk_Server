@@ -1,5 +1,6 @@
 var sequelize, models;
 var _ = require('underscore');
+var util = require('../util/util');
 
 exports.init = function(app){
     sequelize = app.get('sequelize');
@@ -52,8 +53,9 @@ exports.getPlayerList = function(req, res){
             tmp.player = groupBy[key];
             result.push(tmp);
         }
-
-        res.send(result);
+        util.success(res, result);
+    }).catch(function(err){
+        util.fail(res, "서버에서 오류가 발생했습니다.");
     });
 };
 
@@ -87,6 +89,8 @@ exports.getPlayerInfo = function(req,res){
         include: [{model: models.Like, as: 'like', attributes: ['seq'], where: {liketype: 'player', userid: userid}, required: false},
                   {model: models.Follow, as: 'follow', attributes: ['seq'], where: {followtype: 'player', userid: userid}, required: false}]
     }).then(function(player){
-        res.send(player);
+        util.success(res, player);
+    }).catch(function(err){
+        util.fail(res, "서버에서 오류가 발생했습니다.");
     });
 };

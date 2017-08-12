@@ -6,6 +6,7 @@ var urlMetadata = require('url-metadata');
 var moment = require('moment');
 var cron = require('cron');
 var fs = require('fs');
+var util = require('../util/util');
 
 exports.init = function(app){
    config = app.get('config');
@@ -40,7 +41,7 @@ new cron.CronJob('00 00 * * * *', function(){
 exports.getMainNewsList = function(req, res) {
     var fileRead = fs.readFileSync('./newsFile/news.json', 'utf8');
     var newsData = JSON.parse(fileRead);
-    res.send(newsData);
+    util.success(res, newsData);
 };
 
 /**
@@ -67,7 +68,7 @@ exports.getMainNewsList = function(req, res) {
 exports.getNewsListByTeam = function(req, res){
     var teamName = req.params.team+' 배구단';
     var response = getNewsDataFromAPI(teamName,15,1);
-    res.send(response);
+    util.success(res, response);
 };
 
 exports.newsListToJsonFile = function(){

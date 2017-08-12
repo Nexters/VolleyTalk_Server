@@ -10,7 +10,7 @@ var app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -47,9 +47,8 @@ if(!fs.existsSync('./newsFile')){
 }
 
 //이미지 폴더 생성
-if(!fs.existsSync('./img') || !fs.existsSync('./img_thumb')){
+if(!fs.existsSync('./img')){
     fs.mkdirSync('./img');
-    fs.mkdirSync('./img_thumb');
 }
 
 // catch 404 and forward to error handler

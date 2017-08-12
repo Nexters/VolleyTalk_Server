@@ -1,6 +1,5 @@
-//userid nickname email profileimg_thumb, bgimg
-
 var sequelize, models;
+var util = require('../util/util');
 
 exports.init = function(app){
     sequelize = app.get('sequelize');
@@ -67,16 +66,85 @@ exports.userLogin = function(req, res){
     }).then(function(User){
         var created = User[1];
         if(!created){
-            res.send({status: 'exist', user: User[0].seq});
+            util.success(res,{status: 'exist', user: User[0].seq});
         }else {
-            res.send({status: 'new', user: User[0].seq});
+            util.success(res,{status: 'new', user: User[0].seq});
         }
     }).catch(function(err){
         console.log(err);
-        res.send({status: false});
+        util.fail(res, "로그인에 실패하였습니다");
     });
 };
 
+
+
+/**
+ * @swagger
+ * /user/existNickname:
+ *   get:
+ *     summary: 닉네임 중복체크
+ *     description: 닉네임 중복 체크
+ *     tags: [User]
+ *     parameters:
+ *       - name: nickname
+ *         description: 닉네임
+ *         in: query
+ *         type: string
+ *         required: true
+ *         defaultValue: testAccount
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Check Exist NickName
+ */
+exports.isExistNickName = function(req, res){
+    var nickName = req.query.nickname;
+
+    models.User.count({where: {nickname: nickName}}).then(function(count){
+        if(count == 0){
+            util.success(res,{exist: false});
+        }else if(count >= 1){
+            util.success(res,{exist: true});
+        }
+    });
+};
+
+
+/**
+ * @swagger
+ * /user/updateNickname:
+ *   post:
+ *     summary: 닉네임 변경
+ *     description: 닉네임 변경
+ *     tags: [User]
+ *     parameters:
+ *       - name: nickname
+ *         description: 닉네임
+ *         in: query
+ *         type: string
+ *         required: true
+ *         defaultValue: testAccount
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Success update nickname
+ */
+exports.updateNickName = function(req, res){
+    var userid = req.session.userid;
+    var nickName = req.query.nickname;
+
+    models.User.count({where: {nickname: nickName}}).then(function(count){
+        if(count == 0){
+            models.User.update({nickname: nickName}, {where: {userid: userid}, returning: false}).then(function(){
+                util.success(res, {res: 'success'});
+            });
+        }else if(count >= 1){
+            util.fail(res, "중복된 닉네임이 존재합니다.");
+        }
+    });
+};
 
 /**
  * @swagger
@@ -119,7 +187,7 @@ exports.userDelete = function(req,res){
                       models.User.destroy({
                           where: {userid: userId}
                       }).then(function(){
-                          res.send('{status:delete}');
+                          util.success(res,'success delete');
                       });
                   });
               });

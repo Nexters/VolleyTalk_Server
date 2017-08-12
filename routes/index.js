@@ -24,10 +24,8 @@ var follow = require('./follow');
 var like = require('./like');
 var post = require('./post');
 var user = require('./user');
-
 //var comment = require('./comment');
-//var cheering = require('./cheering');
-var multer = require('multer');
+var cheering = require('./cheering');
 
 exports.init = function(app) {
     //swagger 설정
@@ -46,10 +44,13 @@ exports.init = function(app) {
     like.init(app);
     post.init(app);
     user.init(app);
+    cheering.init(app);
 
     //사용자 API
     app.post('/user/login', user.userLogin);
     app.post('/user/delete', user.userDelete);
+    app.get('/user/existNickname', user.isExistNickName);
+    app.post('/user/updateNickname', user.updateNickName);
 
     //뉴스 API
     app.get('/news/list', news.getMainNewsList);           //뉴스탭에서 사용할 뉴스리스트 가져오기
@@ -73,15 +74,10 @@ exports.init = function(app) {
 
     //포스트 API
     app.get('/post/list', post.getPostList);
-    app.post('/post/apply/:filename', post.postPost);
+    app.post('/post/apply', post.postPost);
 
-    app.post('/simpleupload', multer({ dest: '/tmp/upload/'}).single('file'), function(req,res){
+    //응원하기 API
+    app.get('/cheering/list/:playerseq', cheering.cheeringList);
+    app.post('/cheering/apply', cheering.cheeringApply);
 
-        console.log(req.body); //form fields
-
-        console.log(req.file); //form files
-
-        res.status(204).end();
-
-    });
 };
