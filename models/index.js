@@ -29,6 +29,8 @@ var registModels = function(sequelize) {
     Player.hasMany(PlayerPost, {foreignKey: 'playerseq'});
     Player.hasMany(Cheering,   {foreignKey: 'playerseq'});
 
+    Cheering.belongsTo(User,      {foreignKey: 'userid', targetKey:'userid', as: 'user'});
+
     return {
         Team: Team,
         Player: Player,
