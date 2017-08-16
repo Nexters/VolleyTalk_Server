@@ -1,4 +1,5 @@
 var sequelize, models;
+var util = require('../util/util');
 
 exports.init = function(app){
     sequelize = app.get('sequelize');
@@ -16,7 +17,7 @@ exports.init = function(app){
  * @swagger
  * /like/list:
  *   get:
- *     summary:
+ *     summary: 해당 유저의 like 리스트
  *     description: 해당 유저의 like 리스트
  *     tags: [Like]
  *     produces:
@@ -26,20 +27,20 @@ exports.init = function(app){
  *         description: Success get Like List
  */
 exports.getLikeList = function(req,res){
-    var userid = req.session.userid;
+    var userid = req.cookies.userid;
 
     models.Like.findAll({
-        where: {userid: 'userid'}
+        where: {userid: userid}
     }).then(function(likes){
-        res.send(likes);
-    })
+        util.success(res, likes);
+    });
 };
 
 /**
  * @swagger
  * /like/apply:
  *   post:
- *     summary:
+ *     summary: like 하기 / 취소하기
  *     description: like 하기 / 취소하기
  *     tags: [Like]
  *     parameters:
@@ -62,7 +63,7 @@ exports.getLikeList = function(req,res){
  *         description: Success post like
  */
 exports.postLike = function(req,res){
-    var userid = req.session.userid;
+    var userid = req.cookies.userid;
     var type = req.query.likeTypes.toLowerCase();
     var seq = req.query.likeSeq;
 
@@ -191,8 +192,8 @@ exports.postLike = function(req,res){
                 }
             })
     }).then(function (result){
-        res.send('ok');
+        util.success(res, result);
     }).catch(function (err){
-        res.send('error');
+        util.fail(res, err.message);
     });
 };

@@ -46,7 +46,7 @@ exports.getMainNewsList = function(req, res) {
 
 /**
  * @swagger
- * /news/list/{team}:
+ * /news/list:
  *   get:
  *     summary: 팀 이름에 따른 뉴스리스트
  *     description: 팀이름으로 뉴스리스트 불러오기
@@ -54,7 +54,7 @@ exports.getMainNewsList = function(req, res) {
  *     parameters:
  *       - name: team
  *         description: Team name
- *         in: path
+ *         in: query
  *         type: string
  *         required: true
  *         defaultValue : 대한항공 점보스
@@ -66,7 +66,7 @@ exports.getMainNewsList = function(req, res) {
  */
 //팀이름으로 뉴스 검색
 exports.getNewsListByTeam = function(req, res){
-    var teamName = req.params.team+' 배구단';
+    var teamName = req.query.team+' 배구단';
     var response = getNewsDataFromAPI(teamName,15,1);
     util.success(res, response);
 };

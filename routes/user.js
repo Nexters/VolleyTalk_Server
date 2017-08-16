@@ -71,8 +71,7 @@ exports.userLogin = function(req, res){
             util.success(res,{status: 'new', user: User[0].seq});
         }
     }).catch(function(err){
-        console.log(err);
-        util.fail(res, "로그인에 실패하였습니다");
+        util.fail(res, "로그인에 실패하였습니다."+err.message);
     });
 };
 
@@ -132,7 +131,7 @@ exports.isExistNickName = function(req, res){
  *         description: Success update nickname
  */
 exports.updateNickName = function(req, res){
-    var userid = req.session.userid;
+    var userid = req.cookies.userid;
     var nickName = req.query.nickname;
 
     models.User.count({where: {nickname: nickName}}).then(function(count){

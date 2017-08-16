@@ -24,7 +24,7 @@ var follow = require('./follow');
 var like = require('./like');
 var post = require('./post');
 var user = require('./user');
-//var comment = require('./comment');
+var comment = require('./comment');
 var cheering = require('./cheering');
 
 exports.init = function(app) {
@@ -44,6 +44,7 @@ exports.init = function(app) {
     like.init(app);
     post.init(app);
     user.init(app);
+    comment.init(app);
     cheering.init(app);
 
     //사용자 API
@@ -54,15 +55,15 @@ exports.init = function(app) {
 
     //뉴스 API
     app.get('/news/list', news.getMainNewsList);           //뉴스탭에서 사용할 뉴스리스트 가져오기
-    app.get('/news/list/:team', news.getNewsListByTeam);   //팀 이름으로 뉴스리스트 가져오기
+    app.get('/news/list/team', news.getNewsListByTeam);   //팀 이름으로 뉴스리스트 가져오기
     app.get('/news', news.newsListToJsonFile);
 
     //팀 API
-    app.get('/team/list/:gender', team.getTeamList);  //구단 정보 가져오기
+    app.get('/team/list', team.getTeamList);  //구단 정보 가져오기
 
     //선수 API
-    app.get('/player/list/:gender', player.getPlayerList);  //선수 리스트
-    app.get('/player/info/:playerseq', player.getPlayerInfo);  //선수 정보 가져오기
+    app.get('/player/list', player.getPlayerList);  //선수 리스트
+    app.get('/player/info', player.getPlayerInfo);  //선수 정보 가져오기
 
     //팔로우 API
     app.get('/follow/list', follow.getFollowList);
@@ -75,9 +76,13 @@ exports.init = function(app) {
     //포스트 API
     app.get('/post/list', post.getPostList);
     app.post('/post/apply', post.postPost);
+    app.get('/post/img/list', post.getImgList);
 
+    //코멘트 API
+    app.get('/comment/list', comment.getCommentList);
+    app.post('/comment/apply', comment.commentApply);
     //응원하기 API
-    app.get('/cheering/list/:playerseq', cheering.cheeringList);
+    app.get('/cheering/list', cheering.cheeringList);
     app.post('/cheering/apply', cheering.cheeringApply);
 
 };

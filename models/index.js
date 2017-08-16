@@ -10,14 +10,17 @@ exports.init = function(app) {
 };
 
 var registModels = function(sequelize) {
-    var Team       = sequelize.import(__dirname +'/../models/tb_teams');
-    var Player     = sequelize.import(__dirname +'/../models/tb_players');
-    var Follow     = sequelize.import(__dirname +'/../models/tb_follows');
-    var Like       = sequelize.import(__dirname +'/../models/tb_likes');
-    var User       = sequelize.import(__dirname +'/../models/tb_userinfos');
-    var TeamPost   = sequelize.import(__dirname +'/../models/tb_team_posts');
-    var PlayerPost = sequelize.import(__dirname +'/../models/tb_player_posts');
-    var Cheering   = sequelize.import(__dirname +'/../models/tb_cheerings');
+    var Team          = sequelize.import(__dirname +'/../models/tb_teams');
+    var Player        = sequelize.import(__dirname +'/../models/tb_players');
+    var Follow        = sequelize.import(__dirname +'/../models/tb_follows');
+    var Like          = sequelize.import(__dirname +'/../models/tb_likes');
+    var User          = sequelize.import(__dirname +'/../models/tb_userinfos');
+    var TeamPost      = sequelize.import(__dirname +'/../models/tb_team_posts');
+    var TeamComment   = sequelize.import(__dirname +'/../models/tb_team_comments');
+    var PlayerPost    = sequelize.import(__dirname +'/../models/tb_player_posts');
+    var PlayerComment = sequelize.import(__dirname +'/../models/tb_player_comments');
+    var Cheering      = sequelize.import(__dirname +'/../models/tb_cheerings');
+
 
     Team.hasMany(Player,       {foreginKey: 'teamseq'});
     Team.hasMany(Like,         {foreignKey: 'typeseq', as: 'like'});
@@ -29,7 +32,16 @@ var registModels = function(sequelize) {
     Player.hasMany(PlayerPost, {foreignKey: 'playerseq'});
     Player.hasMany(Cheering,   {foreignKey: 'playerseq'});
 
-    Cheering.belongsTo(User,      {foreignKey: 'userid', targetKey:'userid', as: 'user'});
+    TeamPost.hasMany(TeamComment,     {foreignKey: 'teamseq', as: 'comment'});
+
+    TeamComment.belongsTo(User,       {foreignKey: 'userid', targetKey:'userid', as: 'user'});
+
+    PlayerPost.hasMany(PlayerComment, {foreignKey: 'playerseq', as: 'comment'});
+
+    PlayerComment.belongsTo(User,     {foreignKey: 'userid', targetKey:'userid', as: 'user'});
+
+    Cheering.belongsTo(User,          {foreignKey: 'userid', targetKey:'userid', as: 'user'});
+
 
     return {
         Team: Team,
@@ -38,7 +50,9 @@ var registModels = function(sequelize) {
         Like: Like,
         User: User,
         TeamPost: TeamPost,
+        TeamComment: TeamComment,
         PlayerPost: PlayerPost,
+        PlayerComment: PlayerComment,
         Cheering: Cheering
     };
 };

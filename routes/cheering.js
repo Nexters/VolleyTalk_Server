@@ -45,7 +45,7 @@ exports.cheeringApply = function(req,res){
     var data = {
         playerseq: req.body.playerseq,
         comment: req.body.comment,
-        userid: req.session.userid
+        userid: req.cookies.userid
     };
 
     models.Cheering.create(data).then(function(response){
@@ -56,15 +56,15 @@ exports.cheeringApply = function(req,res){
 
 /**
  * @swagger
- * /cheering/list/{playerseq}:
+ * /cheering/list:
  *   get:
- *     summary:
+ *     summary: 선수 응원 정보 리스트
  *     description: 선수 응원 정보 리스트
  *     tags: [Cheering]
  *     parameters:
  *       - name: playerseq
  *         description: 선수 seq
- *         in: path
+ *         in: query
  *         type: integer
  *         required: true
  *         defaultValue: 1
@@ -75,8 +75,8 @@ exports.cheeringApply = function(req,res){
  *         description: Success get Player Cheering list
  */
 exports.cheeringList = function(req, res){
-    var playerseq = req.params.playerseq;
-    var userid = req.session.userid;
+    var playerseq = req.query.playerseq;
+    var userid = req.cookies.userid;
 
     models.Cheering.findAll({
         where:{playerseq: playerseq},

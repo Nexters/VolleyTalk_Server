@@ -1,4 +1,5 @@
 var sequelize, models;
+var util = require('../util/util');
 
 exports.init = function(app){
     sequelize = app.get('sequelize');
@@ -22,7 +23,7 @@ exports.init = function(app){
  *     parameters:
  *       - name: gender
  *         description: 성별 (M/F)
- *         in: path
+ *         in: query
  *         type: string
  *         required: true
  *         defaultValue: M
@@ -33,14 +34,14 @@ exports.init = function(app){
  *         description: Success get Team List
  */
 exports.getTeamList = function(req, res){
-    var gender = req.params.gender;
-    var userid = req.session.userid;
+    var gender = req.query.gender;
+    var userid = req.cookies.userid;
 
     models.Team.findAll({
         where: {gender: gender},
         include: [{model: models.Like, as: 'like', attributes: ['seq'], where: {liketype: 'team', userid: userid}, required: false},
                   {model: models.Follow, as: 'follow', attributes: ['seq'], where: {followtype: 'team', userid: userid}, required: false}]
     }).then(function(teams){
-        res.send(teams);
+        util.success(res, teams);
     });
 };
