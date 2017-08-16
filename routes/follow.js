@@ -1,4 +1,5 @@
 var sequelize, models;
+var util = require('../util/util');
 
 exports.init = function(app){
     sequelize = app.get('sequelize');
@@ -16,7 +17,7 @@ exports.init = function(app){
  * @swagger
  * /follow/list:
  *   get:
- *     summary:
+ *     summary: 해당 유저의 follow 리스트
  *     description: 해당 유저의 follow 리스트
  *     tags: [Follow]
  *     produces:
@@ -26,13 +27,13 @@ exports.init = function(app){
  *         description: Success get Follow List
  */
 exports.getFollowList = function(req,res){
-    var userid = req.session.userid;
+    var userid = req.cookies.userid;
 
     models.Follow.findAll({
-        where: {userid: 'userid'}
+        where: {userid: userid}
     }).then(function(follows){
-        res.send(follows);
-    })
+        util.success(res, follows);
+    });
 };
 
 
@@ -63,7 +64,7 @@ exports.getFollowList = function(req,res){
  *         description: Success post Follow
  */
 exports.postFollow = function(req,res){
-    var userid = req.session.userid;
+    var userid = req.cookies.userid;
     var type = req.query.followTypes.toLowerCase();
     var seq = req.query.followSeq;
 
@@ -73,7 +74,7 @@ exports.postFollow = function(req,res){
     if(type == 'user'){
         models.User.findOne({attributes:['seq'], where:{userid: userid}}).then(function(userSeq){
             if(userSeq.dataValues.seq == seq){
-                res.send("You can't follow yourself");
+                util.fail(res, "You can't follow yourself");
             }else{
                 mySeq = userSeq.dataValues.seq;
             }
@@ -130,8 +131,8 @@ exports.postFollow = function(req,res){
                 }
             })
     }).then(function (result){
-        res.send('ok');
+        util.success(res, result);
     }).catch(function (err){
-        res.send('error');
+        util.fail(res, err.message);
     });
 };

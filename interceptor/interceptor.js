@@ -1,16 +1,16 @@
-//TODO :유저 인증 체크
-var auth = function(){
-    return function(req,res,next){
-        if(process.env.NODE_ENV == 'prod'){
+var util = require('../util/util');
 
+var auth = function () {
+    return function (req, res, next) {
+        if(req.cookies.userid != null) {
+            next();
         }else{
-            req.session.userid = 'testAccount';
+            util.fail(res, "인증에 실패했습니다");
         }
-        next();
     }
 };
 
-exports.init = function(app) {
-   app.use(auth());
+exports.init = function (app) {
+    app.use(auth());
 };
 

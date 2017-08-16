@@ -16,15 +16,15 @@ exports.init = function(app){
 
 /**
  * @swagger
- * /player/list/{gender}:
+ * /player/list:
  *   get:
- *     summary:
+ *     summary: 선수정보를 리스트로 넘겨줌
  *     description: 선수정보를 리스트로 넘겨줌
  *     tags: [Player]
  *     parameters:
  *       - name: gender
  *         description: 성별 (M/F)
- *         in: path
+ *         in: query
  *         type: string
  *         required: true
  *         defaultValue: M
@@ -35,8 +35,8 @@ exports.init = function(app){
  *         description: Success get Player List
  */
 exports.getPlayerList = function(req, res){
-    var gender = req.params.gender;
-    var userid = req.session.userid;
+    var gender = req.query.gender;
+    var userid = req.cookies.userid;
 
     models.Player.findAll({
         attributes: ['seq','teamseq','backnumber','name','physical','likecount','postcount'],
@@ -55,21 +55,21 @@ exports.getPlayerList = function(req, res){
         }
         util.success(res, result);
     }).catch(function(err){
-        util.fail(res, "서버에서 오류가 발생했습니다.");
+        util.fail(res, "서버에서 오류가 발생했습니다."+err.message);
     });
 };
 
 /**
  * @swagger
- * /player/info/{playerseq}:
+ * /player/info:
  *   get:
- *     summary:
+ *     summary: 선수정보를 넘겨줌
  *     description: 선수정보를 넘겨줌
  *     tags: [Player]
  *     parameters:
  *       - name: playerseq
  *         description: 선수 seq
- *         in: path
+ *         in: query
  *         type: string
  *         required: true
  *         defaultValue: 1
@@ -80,8 +80,8 @@ exports.getPlayerList = function(req, res){
  *         description: Success get Player infomation
  */
 exports.getPlayerInfo = function(req,res){
-    var playerseq = req.params.playerseq;
-    var userid = req.session.userid;
+    var playerseq = req.query.playerseq;
+    var userid = req.cookies.userid;
 
     models.Player.findOne({
         attributes: ['seq','teamseq','backnumber','name','physical','likecount','postcount'],
@@ -91,6 +91,6 @@ exports.getPlayerInfo = function(req,res){
     }).then(function(player){
         util.success(res, player);
     }).catch(function(err){
-        util.fail(res, "서버에서 오류가 발생했습니다.");
+        util.fail(res, "서버에서 오류가 발생했습니다."+err.message);
     });
 };

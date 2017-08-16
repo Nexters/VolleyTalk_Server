@@ -3,6 +3,7 @@ var Q = require('q');
 var multer = require('multer');
 var path = require('path');
 var gm = require('gm');
+var util = require('../util/util');
 
 exports.init = function(app){
     sequelize = app.get('sequelize');
@@ -25,7 +26,7 @@ exports.init = function(app){
  *     tags: [Post]
  *     parameters:
  *       - name: type
- *         description: 포스트 타입(team, user)
+ *         description: 포스트 타입(team, player)
  *         in: query
  *         type: string
  *         required: true
@@ -61,16 +62,12 @@ exports.getPostList = function(req, res){
   var postCount  = req.params.postCount;
 
   if(type == 'team'){
-      models.TeamPost.findAll({
-          where: {teamseq: seq}, offset: start, limit: postCount
-      }).then(function(teams){
-          res.send(teams);
+      models.TeamPost.findAll({where: {teamseq: seq}, offset: start, limit: postCount}).then(function(teams){
+          util.success(res, teams);
       });
   }else if(type == 'player'){
-      models.PlayerPost.findAll({
-          where: {teamseq: seq}, offset: start, limit: postCount
-      }).then(function(players){
-          res.send(players);
+      models.PlayerPost.findAll({where: {teamseq: seq}, offset: start, limit: postCount}).then(function(players){
+          util.success(res. players);s
       });
   }
 };
@@ -130,7 +127,7 @@ console.log(req.body);
             seq: req.body.seq,
             title: req.body.title,
             contents: req.body.contents,
-            userid: req.session.userid
+            userid: req.cookies.userid
         };
 
         if(file != null) {
@@ -175,15 +172,15 @@ console.log(req.body);
                 });
             });
         }else{
-            res.json({err: 'post type error'});
+            util.fail(res, "type error");
         }
         if(file != null) {
-            res.json(file);
+            util.success(res, file);
         }else{
-            res.send("ok");
+            util.success(res,{status:'success'});
         }
     }, function (err) {
-        res.send(err);
+        util.fail(res, err.message);
     });
 };
 
@@ -211,7 +208,54 @@ var upload = function (req, res) {
     return deferred.promise;
 };
 
-//포스트 쓰기
-//포스트 상세정보
-//포스트 썸네일 리스트
+/**
+ * @swagger
+ * /post/img/list:
+ *   get:
+ *     summary: 갤러리 가져오기
+ *     description: 갤러리 가져오기
+ *     tags: [Post]
+ *     parameters:
+ *       - name: type
+ *         description: 포스트 타입(team, player)
+ *         in: query
+ *         type: string
+ *         required: true
+ *         defaultValue: team
+ *       - name: start
+ *         description: 포스트 시작번호
+ *         in: query
+ *         type: int
+ *         required: true
+ *         defaultValue: 1
+ *       - name: imgCount
+ *         description: 가져올 이미지 갯수(start기준으로 몇개 가져올건지)
+ *         in: query
+ *         type: int
+ *         required: true
+ *         defaultValue: 10
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Success get Post img List
+ */
+exports.getImgList = function(req, res){
+    var type = req.query.type;
+    var start= req.params.start;
+    var imgCount  = req.params.imgCount;
+
+    if(type == 'team'){
+        models.TeamPost.findAll({attributes:['seq','img_url_thumb'], where:{img_url_thumb: {$ne: null}}, offset: start, limit: imgCount}).then(function(imgList){
+            util.success(res, imgList);
+        });
+    }else if(type == 'player'){
+        models.PlayerPost.findAll({attributes:['seq','img_url_thumb'],  where:{img_url_thumb: {$ne: null}}, offset: start, limit: imgCount}).then(function(imgList){
+            util.success(res, imgList);
+        });
+    }else{
+        util.fail(res, "type error");
+    }
+};
+
 //포스트 삭제

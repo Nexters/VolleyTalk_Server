@@ -15,11 +15,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('config', config);
-app.use(session({
-    secret: config.sessionKey,
-    resave: false,
-    saveUninitialized: true
-}));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
