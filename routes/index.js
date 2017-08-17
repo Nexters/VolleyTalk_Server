@@ -26,7 +26,7 @@ var post = require('./post');
 var user = require('./user');
 var comment = require('./comment');
 var cheering = require('./cheering');
-var imgae = require('./image');
+var image = require('./image');
 
 exports.init = function(app) {
     //swagger 설정
