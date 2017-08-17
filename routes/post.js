@@ -170,6 +170,7 @@ exports.postPost = function(req,res){
             util.fail(res, "type error");
         }
         if(file != null) {
+            file.thumbnail = thumbnail;
             util.success(res, file);
         }else{
             util.success(res,{status:'success'});
