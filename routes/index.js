@@ -26,7 +26,6 @@ var post = require('./post');
 var user = require('./user');
 var comment = require('./comment');
 var cheering = require('./cheering');
-var image = require('./image');
 
 exports.init = function(app) {
     //swagger 설정
@@ -82,11 +81,8 @@ exports.init = function(app) {
     //코멘트 API
     app.get('/comment/list', comment.getCommentList);
     app.post('/comment/apply', comment.commentApply);
-
     //응원하기 API
     app.get('/cheering/list', cheering.cheeringList);
     app.post('/cheering/apply', cheering.cheeringApply);
 
-    //이미지 API
-    app.get('/img/:file', image.getImage);
 };

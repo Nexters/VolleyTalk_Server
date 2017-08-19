@@ -46,7 +46,7 @@ exports.getMainNewsList = function(req, res) {
 
 /**
  * @swagger
- * /news/team:
+ * /news/list:
  *   get:
  *     summary: 팀 이름에 따른 뉴스리스트
  *     description: 팀이름으로 뉴스리스트 불러오기
