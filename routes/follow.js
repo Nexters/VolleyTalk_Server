@@ -68,7 +68,7 @@ exports.postFollow = function(req,res){
     var type = req.query.followTypes.toLowerCase();
     var seq = req.query.followSeq;
 
-    var where = {where: {followtype: type, typeseq: seq, userid: userid}};
+    var data = {followtype: type, typeseq: seq, userid: userid};
     var mySeq;
     //본인이 본인 팔로우 하는지 체크
     if(type == 'user'){
@@ -81,12 +81,14 @@ exports.postFollow = function(req,res){
         });
     }
 
+
+
     sequelize.transaction(function(t){
         //Todo: 내가 다른 유저를 팔로우 하면 -> 나는 팔로잉 카운트가, 상대방은 팔로워 카운트가 증가해야함.
-        return models.Follow.count(where, {transaction: t})
+        return models.Follow.count({where: data}, {transaction: t})
             .then(function (follow) {
                 if(follow >= 1){ // 팔로우를 이미 한 상태 -> 팔로우 취소
-                    return models.Follow.destroy(where, {transaction: t})
+                    return models.Follow.destroy({where: data}, {transaction: t})
                         .then(function(follow){
                             if(type == 'user'){
                                 //상대방의 팔로우 카운트를 가져온다
@@ -96,28 +98,8 @@ exports.postFollow = function(req,res){
                                         //-1을 한다
                                         return models.User.update({followercount: count.dataValues.followercount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                                return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
-                                                    return models.User.update({followingcount: count.dataValues.followingcount - 1}, {
-                                                        where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                                        return true;
-                                                    });
-                                                });
-                                        });
-                                    }
-                                });
-                            }
-                            return true;
-                        });
-                }else{           // 아직 팔로우를 안한상태 -> 팔로우
-                    return models.Follow.create(where, {transaction: t})
-                        .then(function(follow){
-                            if(type == 'user'){
-                                models.User.findOne({attributes:['followercount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.followercount != 0) {
-                                        return models.User.update({followercount: count.dataValues.followercount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
                                             return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
-                                                return models.User.update({followingcount: count.dataValues.followingcount + 1}, {
+                                                return models.User.update({followingcount: count.dataValues.followingcount - 1}, {
                                                     where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
                                                     return true;
                                                 });
@@ -127,6 +109,26 @@ exports.postFollow = function(req,res){
                                 });
                             }
                             return true;
+                        });
+                }else{           // 아직 팔로우를 안한상태 -> 팔로우
+                    return models.Follow.create(data, {transaction: t})
+                        .then(function(follow){
+                            if(type == 'user'){
+                                models.User.findOne({attributes:['followercount'], where:{seq: seq}}, {transaction: t}).then(function(count){
+                                    if(count.dataValues.followercount != 0) {
+                                        return models.User.update({followercount: count.dataValues.followercount + 1}, {
+                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                            return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
+                                                return models.User.update({followingcount: count.dataValues.followingcount + 1}, {
+                                                    where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                                    return updateRes;
+                                                });
+                                            });
+                                        });
+                                    }
+                                });
+                            }
+                            return follow;
                         });
                 }
             })
