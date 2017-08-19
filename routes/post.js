@@ -34,19 +34,19 @@ exports.init = function(app){
  *       - name: seq
  *         description: 포스트 seq
  *         in: query
- *         type: int
+ *         type: integer
  *         required: true
  *         defaultValue: 1
  *       - name: start
  *         description: 포스트 시작번호
  *         in: query
- *         type: int
+ *         type: integer
  *         required: true
  *         defaultValue: 1
  *       - name: postCount
  *         description: 가져올 포스트 갯수(start기준으로 몇개 가져올건지
  *         in: query
- *         type: int
+ *         type: integer
  *         required: true
  *         defaultValue: 10
  *     produces:
@@ -56,10 +56,10 @@ exports.init = function(app){
  *         description: Success get Post List
  */
 exports.getPostList = function(req, res){
-  var type = req.params.type; //team, user;
-  var seq  = req.params.seq;
-  var start= req.params.start;
-  var postCount  = req.params.postCount;
+  var type = req.query.type; //team, user;
+  var seq  = req.query.seq;
+  var start= Number(req.query.start);
+  var postCount  = Number(req.query.postCount);
 
   if(type == 'team'){
       models.TeamPost.findAll({where: {teamseq: seq}, offset: start, limit: postCount}).then(function(teams){
@@ -67,7 +67,7 @@ exports.getPostList = function(req, res){
       });
   }else if(type == 'player'){
       models.PlayerPost.findAll({where: {teamseq: seq}, offset: start, limit: postCount}).then(function(players){
-          util.success(res. players);s
+          util.success(res. players);ç
       });
   }
 };
@@ -95,7 +95,7 @@ exports.getPostList = function(req, res){
  *       - name: seq
  *         description: 포스트 seq
  *         in: formData
- *         type: int
+ *         type: integer
  *         required: true
  *         defaultValue: 1
  *       - name: title
@@ -121,10 +121,9 @@ exports.getPostList = function(req, res){
 
 exports.postPost = function(req,res){
     upload(req, res).then(function (file) {
-console.log(req.body);
+        var seq = req.body.seq;
         var model = {
             type: req.body.type,
-            seq: req.body.seq,
             title: req.body.title,
             contents: req.body.contents,
             userid: req.cookies.userid
@@ -132,21 +131,19 @@ console.log(req.body);
 
         if(file != null) {
             var thumbnail = file.path.replace('_','_thumb_');
+            model.img_url = file.path;
+            model.img_url_thumb = thumbnail;
             gm(file.path).thumb(200,200, thumbnail, function(err){
                 if(err) console.log(err);
                 else {
                     console.log('thumbnail create done : ' + thumbnail);
-                    model.img_url = file.path;
-                    model.img_url_thumb = thumbnail;
                 }
             });
         }
 
         //Todo: 트랜잭션 걸기
         if(model.type == 'team'){
-            model.teamseq = model.seq;
-            delete(model.seq);
-
+            model.teamseq = seq;
             models.TeamPost.create(
                 model
             ).then(function(response){
@@ -158,9 +155,7 @@ console.log(req.body);
                 });
             });
         }else if(model.type == 'player'){
-            model.playerseq = model.seq;
-            delete(model.seq);
-
+            model.playerseq = seq;
             models.PlayerPost.create(
                 model
             ).then(function(response){
@@ -175,6 +170,7 @@ console.log(req.body);
             util.fail(res, "type error");
         }
         if(file != null) {
+            file.thumbnail = thumbnail;
             util.success(res, file);
         }else{
             util.success(res,{status:'success'});
@@ -225,13 +221,13 @@ var upload = function (req, res) {
  *       - name: start
  *         description: 포스트 시작번호
  *         in: query
- *         type: int
+ *         type: integer
  *         required: true
  *         defaultValue: 1
  *       - name: imgCount
  *         description: 가져올 이미지 갯수(start기준으로 몇개 가져올건지)
  *         in: query
- *         type: int
+ *         type: integer
  *         required: true
  *         defaultValue: 10
  *     produces:

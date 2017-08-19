@@ -67,13 +67,13 @@ exports.postLike = function(req,res){
     var type = req.query.likeTypes.toLowerCase();
     var seq = req.query.likeSeq;
 
-    var where = {where: {followtype: type, typeseq: seq, userid: userid}};
+    var data = {liketype: type, typeseq: seq, userid: userid};
     var mySeq;
     //본인이 본인 라이크 하는지 체크
     if(type == 'user'){
         models.User.findOne({attributes:['seq'], where:{userid: userid}}).then(function(userSeq){
             if(userSeq.dataValues.seq == seq){
-                res.send("You can't like yourself");
+                util.fail(res, "You can't like yourself");
             }else{
                 mySeq = userSeq.dataValues.seq;
             }
@@ -81,13 +81,12 @@ exports.postLike = function(req,res){
     }
 
     sequelize.transaction(function(t){
-        return models.Like.count(where, {transaction: t})
+        return models.Like.count({where: data}, {transaction: t})
             .then(function (like) {
                 if(like >= 1){ // 라이크를 이미 한 상태 -> 라이크 취소
-                    return models.Like.destroy(where, {transaction: t})
+                    return models.Like.destroy({where: data}, {transaction: t})
                         .then(function(like){
                             if(type == 'user'){
-
                                 //상대방의 팔로우 카운트를 가져온다
                                 return models.User.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
                                     //상대방의 카운트가 0이 아니면
@@ -95,7 +94,7 @@ exports.postLike = function(req,res){
                                         //-1을 한다
                                         return models.User.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -104,7 +103,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.Team.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -113,7 +112,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.Player.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -122,7 +121,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.TeamPost.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -131,22 +130,22 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.PlayerPost.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
                             }
-                            return true;
+                            return like;
                         });
-                }else{           // 아직 팔로우를 안한상태 -> 팔로우
-                    return models.Like.create(where, {transaction: t})
-                        .then(function(follow){
+                }else{// 아직 팔로우를 안한상태 -> 팔로우
+                    return models.Like.create(data, {transaction: t})
+                        .then(function(like){
                             if(type == 'user'){
                                 models.User.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
                                     if(count.dataValues.likecount != 0) {
                                         return models.User.update({likecount: count.dataValues.likecount + 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -155,7 +154,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.Team.update({likecount: count.dataValues.likecount + 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -164,7 +163,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.Player.update({likecount: count.dataValues.likecount + 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -173,7 +172,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.TeamPost.update({likecount: count.dataValues.likecount + 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
@@ -182,12 +181,12 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.PlayerPost.update({likecount: count.dataValues.likecount + 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return true;
+                                            return updateRes;
                                         });
                                     }
                                 });
                             }
-                            return true;
+                            return like;
                         });
                 }
             })
