@@ -53,6 +53,7 @@ exports.init = function(app) {
     app.post('/user/delete', user.userDelete);
     app.get('/user/existNickname', user.isExistNickName);
     app.post('/user/updateNickname', user.updateNickName);
+    app.get('/user/info', user.getInfo);
 
     //뉴스 API
     app.get('/news/list', news.getMainNewsList);           //뉴스탭에서 사용할 뉴스리스트 가져오기
@@ -72,7 +73,7 @@ exports.init = function(app) {
 
     //라이크 API
     app.get('/like/list', like.getLikeList);
-    app.post('/like/apply', like.postLike);
+    app.post('/like/apply', like.postLikePreCheck, like.postLike);
 
     //포스트 API
     app.get('/post/list', post.getPostList);
@@ -82,6 +83,7 @@ exports.init = function(app) {
     //코멘트 API
     app.get('/comment/list', comment.getCommentList);
     app.post('/comment/apply', comment.commentApply);
+    app.post('/comment/delete', comment.deleteComment);
 
     //응원하기 API
     app.get('/cheering/list', cheering.cheeringList);

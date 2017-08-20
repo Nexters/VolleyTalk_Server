@@ -118,3 +118,57 @@ exports.getCommentList = function(req, res){
         util.fail(res, "type error");
     }
 };
+
+/**
+ * @swagger
+ * /comment/delete:
+ *   post:
+ *     summary: 코멘트 삭제
+ *     description: 코멘트 삭제
+ *     tags: [Comment]
+ *     parameters:
+ *       - name: type
+ *         description: 포스트 타입
+ *         in: formData
+ *         type: string
+ *         required: true
+ *         defaultValue: team
+ *       - name: seq
+ *         description: 코멘트 seq
+ *         in: formData
+ *         type: integer
+ *         required: true
+ *         defaultValue: 1
+ *     consumes:
+ *       - application/x-www-form-urlencoded
+ *     produces:
+ *       - multipart/form-data
+ *     responses:
+ *       200:
+ *         description: Success Comment delete success
+ */
+exports.deleteComment = function(req,res){
+    var userid = req.cookies.userid;
+    var type = req.body.type;
+    var seq  = req.body.seq;
+
+    console.log(type);
+
+    if(type == 'team'){
+        models.TeamComment.destroy({
+            where: {userid: userid, seq: seq}
+        }).then(function(desResult){
+            util.success(res, desResult);
+        }).catch(function(err){
+            util.fail(res, err.message);
+        });
+    }else if(type == 'player') {
+        models.PlayerComment.destroy({
+            where: {userid: userid, seq: seq}
+        }).then(function(desResult){
+            util.success(res, desResult);
+        }).catch(function(err){
+            util.fail(res, err.message);
+        });
+    }
+};

@@ -102,7 +102,6 @@ exports.postFollow = function(req,res){
     }
 
     sequelize.transaction(function(t){
-        //Todo: 내가 다른 유저를 팔로우 하면 -> 나는 팔로잉 카운트가, 상대방은 팔로워 카운트가 증가해야함.
         return models.Follow.count({where: data}, {transaction: t})
             .then(function (follow) {
                 if(follow >= 1){ // 팔로우를 이미 한 상태 -> 팔로우 취소
@@ -118,7 +117,7 @@ exports.postFollow = function(req,res){
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
                                             return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
                                                 return models.User.update({followingcount: count.dataValues.followingcount - 1}, {
-                                                    where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                                    where: {seq: mySeq}, returning: false}, {transaction: t}).then(function(updateRes){
                                                     return true;
                                                 });
                                             });
@@ -137,7 +136,7 @@ exports.postFollow = function(req,res){
                                         where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
                                         return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
                                             return models.User.update({followingcount: count.dataValues.followingcount + 1}, {
-                                                where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                                where: {seq: mySeq}, returning: false}, {transaction: t}).then(function(updateRes){
                                                 return updateRes;
                                             });
                                         });

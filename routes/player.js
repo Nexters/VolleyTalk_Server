@@ -84,7 +84,7 @@ exports.getPlayerInfo = function(req,res){
     var userid = req.cookies.userid;
 
     models.Player.findOne({
-        attributes: ['seq','teamseq','backnumber','name','physical','likecount','postcount'],
+        attributes: ['seq','teamseq','backnumber','name','physical','likecount','postcount','position'],
         where: {seq: playerseq},
         include: [{model: models.Like, as: 'like', attributes: ['seq'], where: {liketype: 'player', userid: userid}, required: false},
                   {model: models.Follow, as: 'follow', attributes: ['seq'], where: {followtype: 'player', userid: userid}, required: false}]

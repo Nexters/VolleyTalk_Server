@@ -42,6 +42,9 @@ var registModels = function(sequelize) {
 
     Cheering.belongsTo(User,          {foreignKey: 'userid', targetKey:'userid', as: 'user'});
 
+    Follow.belongsTo(Team,   {foreignKey: 'typeseq', targetKey:'seq', as: 'teamInfo'});
+    Follow.belongsTo(Player, {foreignKey: 'typeseq', targetKey:'seq', as: 'playerInfo'});
+    Follow.belongsTo(User,   {foreignKey: 'typeseq', targetKey:'seq', as: 'userInfo'});
 
     return {
         Team: Team,

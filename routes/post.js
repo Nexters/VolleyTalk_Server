@@ -62,7 +62,7 @@ exports.getPostList = function(req, res){
   var postCount  = Number(req.query.postCount);
 
   if(type == 'team'){
-      models.TeamPost.findAll({where: {teamseq: seq}, offset: start, limit: postCount}).then(function(teams){
+      models.TeamPost.findAll({where: {teamseq: seq}, order: 'createdAt DESC', offset: start, limit: postCount}).then(function(teams){
           util.success(res, teams);
       });
   }else if(type == 'player'){
@@ -218,6 +218,12 @@ var upload = function (req, res) {
  *         type: string
  *         required: true
  *         defaultValue: team
+ *       - name: typeseq
+ *         description: 포스트 타입seq
+ *         in: query
+ *         type: integer
+ *         required: true
+ *         defaultValue: 1
  *       - name: start
  *         description: 포스트 시작번호
  *         in: query
@@ -238,15 +244,16 @@ var upload = function (req, res) {
  */
 exports.getImgList = function(req, res){
     var type = req.query.type;
+    var typeseq = req.query.typeseq;
     var start= req.params.start;
     var imgCount  = req.params.imgCount;
 
     if(type == 'team'){
-        models.TeamPost.findAll({attributes:['seq','img_url_thumb'], where:{img_url_thumb: {$ne: null}}, offset: start, limit: imgCount}).then(function(imgList){
+        models.TeamPost.findAll({attributes:['seq','teamseq','img_url_thumb','img_url'], order: 'createdAt DESC', where:{img_url_thumb: {$ne: null}, teamseq: typeseq}, offset: start, limit: imgCount}).then(function(imgList){
             util.success(res, imgList);
         });
     }else if(type == 'player'){
-        models.PlayerPost.findAll({attributes:['seq','img_url_thumb'],  where:{img_url_thumb: {$ne: null}}, offset: start, limit: imgCount}).then(function(imgList){
+        models.PlayerPost.findAll({attributes:['seq','playerseq','img_url_thumb','img_url'], order: 'createdAt DESC', where:{img_url_thumb: {$ne: null}, playerseq: typeseq}, offset: start, limit: imgCount}).then(function(imgList){
             util.success(res, imgList);
         });
     }else{

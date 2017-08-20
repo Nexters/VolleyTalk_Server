@@ -62,23 +62,37 @@ exports.getLikeList = function(req,res){
  *       200:
  *         description: Success post like
  */
-exports.postLike = function(req,res){
+exports.postLikePreCheck = function(req,res, next) {
     var userid = req.cookies.userid;
     var type = req.query.likeTypes.toLowerCase();
     var seq = req.query.likeSeq;
 
-    var data = {liketype: type, typeseq: seq, userid: userid};
-    var mySeq;
     //본인이 본인 라이크 하는지 체크
-    if(type == 'user'){
-        models.User.findOne({attributes:['seq'], where:{userid: userid}}).then(function(userSeq){
-            if(userSeq.dataValues.seq == seq){
+    if (type == 'user') {
+        models.User.findOne({attributes: ['seq'], where: {userid: userid}}).then(function (userSeq) {
+            if (userSeq.dataValues.seq == seq) {
                 util.fail(res, "You can't like yourself");
-            }else{
-                mySeq = userSeq.dataValues.seq;
+            } else {
+                models.User.findOne({attributes: ['seq'], where: {seq: seq}}).then(function (userSeq2) {
+                    if(userSeq2 == null){
+                        util.fail(res, "Not Exist User");
+                    }else {
+                        next();
+                    }
+                });
             }
         });
+    }else{
+        next();
     }
+};
+
+exports.postLike = function(req, res) {
+
+    var userid = req.cookies.userid;
+    var type = req.query.likeTypes.toLowerCase();
+    var seq = req.query.likeSeq;
+    var data = {liketype: type, typeseq: seq, userid: userid};
 
     sequelize.transaction(function(t){
         return models.Like.count({where: data}, {transaction: t})
@@ -94,7 +108,7 @@ exports.postLike = function(req,res){
                                         //-1을 한다
                                         return models.User.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
+                                            return {"result" : true};
                                         });
                                     }
                                 });
@@ -103,7 +117,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.Team.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
+                                            return {"result" : true};
                                         });
                                     }
                                 });
@@ -112,7 +126,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.Player.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
+                                            return {"result" : true};
                                         });
                                     }
                                 });
@@ -121,7 +135,7 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.TeamPost.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
+                                            return {"result" : true};
                                         });
                                     }
                                 });
@@ -130,60 +144,49 @@ exports.postLike = function(req,res){
                                     if(count.dataValues.likecount != 0) {
                                         return models.PlayerPost.update({likecount: count.dataValues.likecount - 1}, {
                                             where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
+                                            return {"result" : true};
                                         });
                                     }
                                 });
                             }
-                            return like;
                         });
                 }else{// 아직 팔로우를 안한상태 -> 팔로우
                     return models.Like.create(data, {transaction: t})
                         .then(function(like){
                             if(type == 'user'){
                                 models.User.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.likecount != 0) {
-                                        return models.User.update({likecount: count.dataValues.likecount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
-                                        });
-                                    }
+                                    return models.User.update({likecount: count.dataValues.likecount + 1}, {
+                                        where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                        return updateRes;
+                                    });
                                 });
                             }else if(type == 'team'){
                                 models.Team.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.likecount != 0) {
-                                        return models.Team.update({likecount: count.dataValues.likecount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
-                                        });
-                                    }
+                                    return models.Team.update({likecount: count.dataValues.likecount + 1}, {
+                                        where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                        return updateRes;
+                                    });
                                 });
                             }else if(type == 'player'){
                                 models.Player.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.likecount != 0) {
-                                        return models.Player.update({likecount: count.dataValues.likecount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
-                                        });
-                                    }
+                                    return models.Player.update({likecount: count.dataValues.likecount + 1}, {
+                                        where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                        return updateRes;
+                                    });
                                 });
                             }else if(type == 'teampost'){
                                 models.TeamPost.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.likecount != 0) {
-                                        return models.TeamPost.update({likecount: count.dataValues.likecount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
-                                        });
-                                    }
+                                    return models.TeamPost.update({likecount: count.dataValues.likecount + 1}, {
+                                        where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                        return updateRes;
+                                    });
                                 });
                             }else if(type == 'playerpost'){
                                 models.PlayerPost.findOne({attributes:['likecount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.likecount != 0) {
-                                        return models.PlayerPost.update({likecount: count.dataValues.likecount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return updateRes;
-                                        });
-                                    }
+                                    return models.PlayerPost.update({likecount: count.dataValues.likecount + 1}, {
+                                        where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                        return updateRes;
+                                    });
                                 });
                             }
                             return like;

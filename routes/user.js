@@ -75,7 +75,28 @@ exports.userLogin = function(req, res){
     });
 };
 
+/**
+ * @swagger
+ * /user/info:
+ *   get:
+ *     summary: 유저 정보 확인
+ *     description: 유저 정보 확인
+ *     tags: [User]
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Get User info
+ */
+exports.getInfo = function(req,res){
+    var userid = req.cookies.userid;
 
+    models.User.findOne({
+        where : {userid: userid}
+    }).then(function(userinfo){
+       util.success(res, userinfo);
+    });
+};
 
 /**
  * @swagger
