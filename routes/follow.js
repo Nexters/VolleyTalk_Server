@@ -29,10 +29,30 @@ exports.init = function(app){
 exports.getFollowList = function(req,res){
     var userid = req.cookies.userid;
 
-    models.Follow.findAll({
-        where: {userid: userid}
-    }).then(function(follows){
-        util.success(res, follows);
+    var result = {};
+    sequelize.transaction(function(t){
+        return models.Follow.findAll({
+            where: {userid: userid, followtype:'team'},
+            include: [{model: models.Team, as: 'teamInfo', attributes: ['likecount','postcount'], required: false}]}, {transaction: t}
+        ).then(function(teamfollows){
+            result.team = teamfollows;
+            return models.Follow.findAll({
+                where: {userid: userid, followtype:'player'},
+                include: [{model: models.Player, as: 'playerInfo', attributes: ['teamseq','name','backnumber','position','likecount','postcount'], required: false}]}, {transaction: t}
+            ).then(function(playerfollows) {
+                result.player = playerfollows;
+
+                return models.Follow.findAll({
+                    where: {userid: userid, followtype:'user'},
+                    include: [{model: models.User, as: 'userInfo', attributes: ['nickname','followercount','postcount'], required: false}]}, {transaction: t}
+                ).then(function(userfollows) {
+                    result.user = userfollows;
+                    return true;
+                });
+            });
+        });
+    }).then(function(){
+        util.success(res, result);
     });
 };
 
@@ -81,8 +101,6 @@ exports.postFollow = function(req,res){
         });
     }
 
-
-
     sequelize.transaction(function(t){
         //Todo: 내가 다른 유저를 팔로우 하면 -> 나는 팔로잉 카운트가, 상대방은 팔로워 카운트가 증가해야함.
         return models.Follow.count({where: data}, {transaction: t})
@@ -108,24 +126,22 @@ exports.postFollow = function(req,res){
                                     }
                                 });
                             }
-                            return true;
+                            return {"result" : true};
                         });
                 }else{           // 아직 팔로우를 안한상태 -> 팔로우
                     return models.Follow.create(data, {transaction: t})
                         .then(function(follow){
                             if(type == 'user'){
                                 models.User.findOne({attributes:['followercount'], where:{seq: seq}}, {transaction: t}).then(function(count){
-                                    if(count.dataValues.followercount != 0) {
-                                        return models.User.update({followercount: count.dataValues.followercount + 1}, {
-                                            where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                            return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
-                                                return models.User.update({followingcount: count.dataValues.followingcount + 1}, {
-                                                    where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
-                                                    return updateRes;
-                                                });
+                                    return models.User.update({followercount: count.dataValues.followercount + 1}, {
+                                        where: {seq: seq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                        return models.User.findOne({attributes:['followingcount'], where:{seq:mySeq}}, {transaction: t}).then(function(count){
+                                            return models.User.update({followingcount: count.dataValues.followingcount + 1}, {
+                                                where: {seq: myseq}, returning: false}, {transaction: t}).then(function(updateRes){
+                                                return updateRes;
                                             });
                                         });
-                                    }
+                                    });
                                 });
                             }
                             return follow;
